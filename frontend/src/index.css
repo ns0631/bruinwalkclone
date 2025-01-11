@@ -1,0 +1,97 @@
+* {box-sizing: border-box;}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgba(0, 200, 255, 0.069);
+}
+
+:root{
+  --blue: rgb(0, 136, 255);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+h1{
+  font-family: 'Trebuchet MS', Verdana, Arial;
+  color: var(--blue);
+  text-align: center;
+  font-weight:bold;
+  clear:both;
+}
+
+#homepagenav{
+  float:right;
+}
+
+#homepagenav li a{
+  margin-top: 5vh;
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size:larger;
+  color: var(--blue);
+}
+
+#signupnavbutton{
+  color:white !important;
+  background-color: var(--blue) !important;
+  border-radius: 2em;
+}
+
+footer{
+  background-color: rgb(73, 72, 72);
+  color: white;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  position: fixed;
+  bottom: 0px;
+  margin:auto;
+  width:100%;
+  overflow:hidden;
+  word-wrap: break-word;
+  padding: 1.5vh 0 1.5vh 0;
+  text-indent: 1em;
+}
+
+footer a{
+  color: white;
+}
+
+#mainpagesearchbar{
+  position: relative;
+  margin:auto;
+  min-width: 350px;
+  max-width: 50%;
+  overflow: auto;
+  height: 50vh;
+}
+
+#dropdownitems{
+  width: 100%;
+}
+
+#dropdownitems p{
+  background-color: white;
+  margin:0vh;
+  padding: 1.0vh;
+}
+
+#mainpagesearchbar p:hover{
+  background-color: rgba(170, 169, 169, 0.395);
+}
+
+#searchform{
+  position:relative;
+  width: 100%;
+}
+
+#dropdownitems{
+  position:relative;
+  top:-2vh;
+}
