@@ -1,8 +1,11 @@
 var mysql = require('mysql');
 var express = require('express');
 var cors = require('cors');
+var bodyParser = require('body-parser'); 
 
-var app = express();
+var app = express(); // Instantiate an express app
+app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // parse application/json
 
 // use it before all route definitions
 app.use(cors({origin: '*'}));

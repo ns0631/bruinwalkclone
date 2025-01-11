@@ -9,11 +9,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function modify(text, substring){
   let index = text.search(substring);
-  if(text == substring){
+  if(text === substring){
     return <p><b>{text}</b></p>;
-  } else if(index == 0){
+  } else if(index === 0){
     return <p><b>{substring}</b>{text.substring(substring.length, text.length)}</p>;
-  } else if(index + substring.length == text.length){
+  } else if(index + substring.length === text.length){
     return <p>{text.substring(0, index)}<b>{substring}</b></p>;
   } else{
     let a = text.substring(0, index);
@@ -24,11 +24,21 @@ function modify(text, substring){
 }
 
 async function queryBackend(input) {
-  let x = await fetch("http://localhost:8000/api/search?text=" + input);
-  let y = await x.text();
-  const z = JSON.parse(y);
-  let finished_data = z.map((a) => {return modify(a.name, input.toUpperCase())});
-  return finished_data;
+  return (async () => {
+    const rawResponse = await fetch("http://localhost:8000/api/search", {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({text: input})
+    });
+    const content = await rawResponse.text();
+    const z = JSON.parse(content);
+    let finished_data = z.map((a) => {return modify(a.name, input.toUpperCase())});
+    return finished_data;
+  })();
+  return [];
 }
 
 function HomePageSearchBar() {

@@ -15,17 +15,13 @@ con.connect(function(err) {
 
 var router = express.Router();
 
-router.get('/search', function(req, res){
-    console.log("here");
-    if(req.query.text){
-        console.log(req.query.text)
-        let query = "SELECT * FROM classes where name like '%" + req.query.text + "%';";
-        console.log(query);
+router.post('/search', function(req, res){
+    const obj = JSON.parse(JSON.stringify(req.body));
+    if(obj.text){
+        let query = "SELECT * FROM classes where name like '%" + obj.text + "%' ORDER BY name;";
         con.query(query, function (err, result, fields) {
         if (err) throw err;
-        console.log(result);
-        console.log("Length: " + result.length)
-        const jsonifiedResult = JSON.stringify(result);
+        const jsonifiedResult = JSON.parse(JSON.stringify(result));
         console.log(jsonifiedResult);
         res.send(jsonifiedResult);
         });
