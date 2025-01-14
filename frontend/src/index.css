@@ -29,10 +29,6 @@ h1{
   clear:both;
 }
 
-#homepagenav{
-  float:right;
-}
-
 #homepagenav li a{
   margin-top: 5vh;
   font-variant: all-small-caps;
@@ -41,7 +37,14 @@ h1{
   color: var(--blue);
 }
 
-#signupnavbutton{
+.signupnav li a{
+  font-variant: all-small-caps;
+  font-weight: bold;
+  font-size:larger;
+  color: var(--blue);
+}
+
+.signupnavbutton{
   color:white !important;
   background-color: var(--blue) !important;
   border-radius: 2em;
@@ -58,7 +61,7 @@ footer{
   width:100%;
   overflow:hidden;
   word-wrap: break-word;
-  padding: 1.5vh 0 1.5vh 0;
+  padding: 1.5vh 0.5vh 1.5vh 0.5vh;
   text-indent: 1em;
 }
 
@@ -87,8 +90,8 @@ footer a{
   z-index: 1;
 }
 
-#mainpagesearchbar p:hover{
-  background-color: rgba(170, 169, 169, 0.395);
+#dropdownitems p:hover{
+  background-color: rgba(170, 169, 169, 1.0);
 }
 
 #searchform{
@@ -101,4 +104,102 @@ footer a{
 #dropdownitems{
   position:relative;
   top:-2vh;
+}
+
+.topleft{
+  position:relative;
+
+  margin:auto;
+  margin-top: 5vh;
+  max-width: 100%;
+  overflow:visible;
+  white-space: nowrap;
+  min-height: 40px;
+  max-height: 10vh;
+}
+
+.buttonbreak{
+  display:none;
+}
+
+@media screen and (max-width: 950px){
+  .signupsearchbar{
+    clear:both;
+    margin:auto;
+    min-width:90%;
+  }
+}
+
+@media screen and (max-width: 450px){
+  .buttonbreak{
+    display:inline;
+  }
+  h3{
+    font-size:20px;
+  }
+}
+
+.topleft h3{
+  color: var(--blue);
+  font-weight:bold;
+  position: relative;
+  top:1.5vh;
+  float:left;
+  
+  a:visited{
+    color: var(--blue);
+  }
+}
+
+.topleft a{
+  text-decoration: none;
+}
+
+.signupsearchbar{
+  width: 50%;
+  vertical-align: middle;
+  position:relative;
+  top:-2vh;
+  left:2vw;
+  float:left;
+}
+
+.signupnav{
+  float:right;
+  position:relative;
+}
+
+h2{
+  position:absolute;
+  top:20vh;
+  clear:both;
+  z-index: -1;
+  left:50%;
+  transform:translate(-50%, 0%);
+  color: var(--blue);
+  font-weight:bold;
+}
+
+.signupfield, .loginfield, .forgotpasswordfield{
+  position:absolute;
+  top:30vh;
+  clear:both;
+  z-index: -1;
+  left:50%;
+  transform:translate(-50%, 0%);
+
+  input{
+    width: 100%;
+  }
+
+  background-color: rgb(219, 219, 219);
+  padding: 1vh 1vw 1vh 1vw;
+  border-radius:10px;
+}
+
+.forgotpasswordlink, .forgotpasswordlink:visited{
+  color: var(--blue);
+}
+.forgotpasswordlink:hover{
+  color: blue;
 }
