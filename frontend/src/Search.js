@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 function modify(text, substring){
-    let index = text.search(substring);
-    if(text === substring){
+    //alert(text + " " + substring);
+    let index = text.toUpperCase().search(substring.toUpperCase());
+    if(text.toUpperCase() === substring.toUpperCase()){
       return <p><b>{text}</b></p>;
     } else if(index === 0){
-      return <p><b>{substring}</b>{text.substring(substring.length, text.length)}</p>;
+      return <p><b>{text.substring(0, substring.length)}</b>{text.substring(substring.length, text.length)}</p>;
     } else if(index + substring.length === text.length){
-      return <p>{text.substring(0, index)}<b>{substring}</b></p>;
+      return <p>{text.substring(0, index)}<b>{text.substring(index, text.length)}</b></p>;
     } else{
       let a = text.substring(0, index);
       let b = text.substr(index, substring.length);
@@ -28,7 +29,7 @@ function modify(text, substring){
       });
       const content = await rawResponse.text();
       const z = JSON.parse(content);
-      let finished_data = z.map((a) => {return modify(a.name, input.toUpperCase())});
+      let finished_data = z.map((a) => {return modify(a.name, input)});
       if(finished_data.length > 10){
         return finished_data.slice(0, 10);
       }

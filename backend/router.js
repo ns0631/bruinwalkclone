@@ -28,7 +28,7 @@ var router = express.Router();
 router.post('/search', function(req, res){
     const obj = JSON.parse(JSON.stringify(req.body));
     if(obj.text){
-        let query = "SELECT * FROM classes where name like '%" + obj.text + "%' ORDER BY name;";
+        let query = "SELECT * FROM classes where name like '%" + obj.text + "%' UNION SELECT * FROM professors where name like '%" + obj.text + "%' ORDER BY name;";
         con.query(query, function (err, result, fields) {
         if (err) throw err;
         const jsonifiedResult = JSON.parse(JSON.stringify(result));
@@ -105,11 +105,8 @@ router.post('/login', function(req, res){
 });
 
 router.post('/forgotpassword', function(req, res){
-    console.log("here");
     const obj = JSON.parse(JSON.stringify(req.body));
     if(obj.email){
-        console.log(obj.email);
-        console.log(obj.password);
         let query = "SELECT * FROM users where email='" + obj.email + "';";
         console.log(query);
         con.query(query, function (err, result, fields) {
@@ -136,6 +133,53 @@ router.post('/forgotpassword', function(req, res){
                 console.log("No such account.");
             }
             res.send("done");
+        });
+    }
+});
+
+router.post('/addreviewinfo', function(req, res){
+    console.log("at addreview info");
+    const obj = JSON.parse(JSON.stringify(req.body));
+    if(obj.department){
+        console.log("Department: " + obj.department);
+        let query = "SELECT * FROM departments where name='" + obj.department + "';";
+        console.log(query);
+        con.query(query, function (err, result, fields) {
+            if (err) throw err;
+            
+            const jsonifiedResult = JSON.parse(JSON.stringify(result));
+            let department_id = jsonifiedResult[0].id;
+            
+            let prof_query = "SELECT * FROM professors where department='" + department_id + "';";
+            console.log(prof_query);
+
+            con.query(prof_query, function (err, result, fields) {
+                if (err) throw err;
+                
+                let professors_obj = JSON.parse(JSON.stringify(result));
+                let class_query = "SELECT * FROM classes where department='" + department_id + "';";
+                console.log(class_query);
+                con.query(class_query, function (err, result, fields) {
+                    if (err) throw err;
+                    
+                    let classes_obj = JSON.parse(JSON.stringify(result));
+
+                    let classes = [];
+                    let profs = [];
+
+                    for(let db_class of classes_obj){
+                        classes.push(db_class.name);
+                    }
+
+                    for(let db_prof of professors_obj){
+                        profs.push(db_prof.name);
+                    }
+
+                    let final_result = JSON.stringify({professors: profs, classes: classes});
+                    console.log(final_result);
+                    res.send(final_result);
+                });
+            });
         });
     }
 });

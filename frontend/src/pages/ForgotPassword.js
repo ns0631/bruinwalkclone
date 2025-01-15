@@ -51,7 +51,7 @@ function ForgotPassword() {
             <form action="/forgotuserpassword" className="forgotpasswordfield" method="POST" onSubmit={handleSubmit}>
                 <div className="mb-3 mt-3">
                     <label for="email" className="form-label">Enter email:</label>
-                    <input type="email" className="form-control" id="email" placeholder="Enter email" name="email" value={username} onInput={(e) => (setUsername(e.target.value))}/>
+                    <input type="email" className="form-control" id="email" placeholder="Email" name="email" value={username} onInput={(e) => (setUsername(e.target.value))}/>
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
                 {status}

@@ -9,7 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import AddReview from "./pages/AddReview";
+import ReviewPage from "./pages/AddReview";
 import ForgotPassword from "./pages/ForgotPassword";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -22,6 +22,7 @@ root.render(
           <Route path="signup" element={<Signup/>} />
           <Route path="login" element={<Login/>} />
           <Route path="forgotpassword" element={<ForgotPassword/>} />
+          <Route path="addreview" element={<ReviewPage/>} />
           <Route path="*" element={<Home/>} />
         </Routes>
       </BrowserRouter>

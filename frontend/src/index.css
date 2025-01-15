@@ -61,7 +61,7 @@ footer{
   width:100%;
   overflow:hidden;
   word-wrap: break-word;
-  padding: 1.5vh 0.5vh 1.5vh 0.5vh;
+  padding: 0.8vh 0.5vh 0.8vh 0.5vh;
   text-indent: 1em;
 }
 
@@ -180,6 +180,87 @@ h2{
   font-weight:bold;
 }
 
+.anonymity{
+  position:absolute;
+  top:27vh;
+  clear:both;
+  z-index: -1;
+  left:50%;
+  transform:translate(-50%, 0%);
+}
+
+.reviewbox{
+  position:absolute;
+  top:34vh;
+  clear:both;
+  z-index: -1;
+  left:50%;
+  transform:translate(-50%, 0%);
+  min-width:70vw;
+
+  padding-top:50px;
+
+  background-color: rgb(219, 219, 219);
+  padding: 1vh 1vw 1vh 1vw;
+  border-radius:10px;
+
+  input{
+    width: 100%;
+  }
+}
+
+hr{
+  clear:both;
+}
+
+.submitReview{
+  clear:both;
+  float:right;
+}
+
+.reviewbox .heading{
+  font-weight: 900;
+}
+
+.informationAttribute{
+  clear:both;
+}
+
+.informationAttribute p{
+  float:left;
+}
+
+.informationAttribute select{
+  float:right;
+  min-width:10vw;
+}
+
+.informationAttribute input[type="number"]{
+  float:right;
+  max-width: 75px;
+  font-size:12px;
+}
+
+.informationAttribute input[type="range"]{
+  display: inline-block;
+  float:right;
+  min-width:75px;
+  max-width:40vw;
+  margin-right:10%;
+}
+
+@media screen and (max-width: 450px){
+  .informationAttribute select{
+    display:block;
+    float:left;
+  }
+
+  .informationAttribute input{
+    display:block;
+    float:left;
+  }
+}
+
 .signupfield, .loginfield, .forgotpasswordfield{
   position:absolute;
   top:30vh;
@@ -202,4 +283,35 @@ h2{
 }
 .forgotpasswordlink:hover{
   color: blue;
+}
+
+.formsubheading{
+  color:black;
+  display:block;
+}
+.formsubsubheading{
+  color:black;
+  font-variant-caps: all-small-caps;
+}
+
+.ratingScale{
+  float:right;
+  width:60%;
+  margin-right: 10%;
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ratingScale p{
+  font-size: min(2vw, 14px);
+  text-align: center;
+}
+
+.reviewtextarea{
+  width:90%;
+  height:30vh;
+  float:right;
+  border-radius:15px;
+  margin: 0 2vh 2vh 2vh;
 }
