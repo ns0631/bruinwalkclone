@@ -4,7 +4,7 @@ import './index.css';
 //import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -19,10 +19,10 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route index element={<Home/>} />
-          <Route path="signup" element={<Signup/>} />
-          <Route path="login" element={<Login/>} />
-          <Route path="forgotpassword" element={<ForgotPassword/>} />
-          <Route path="addreview" element={<ReviewPage/>} />
+          <Route path="signup" element={ (localStorage.getItem('email') === null) ? <Signup/> : <Navigate to='/'  />} />
+          <Route path="login" element={(localStorage.getItem('email') === null) ? <Login/> : <Navigate to='/'  />} />
+          <Route path="forgotpassword" element={(localStorage.getItem('email') === null) ? <ForgotPassword/> : <Navigate to='/'  />} />
+          <Route path="addreview" element={(localStorage.getItem('email') !== null) ? <ReviewPage/> : <Navigate to='/login'  />} />
           <Route path="*" element={<Home/>} />
         </Routes>
       </BrowserRouter>

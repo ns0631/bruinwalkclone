@@ -6,6 +6,7 @@ async function queryBackend(email, password) {
     return (async () => {
       const rawResponse = await fetch("http://localhost:8000/api/login", {
         method: 'POST',
+        'credentials': 'include',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -17,6 +18,7 @@ async function queryBackend(email, password) {
       if(z.outcome === "incorrect"){
         return true;
       } else{
+        localStorage.setItem("email", email);
         return false;
       }
     })();

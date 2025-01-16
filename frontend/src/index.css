@@ -189,7 +189,7 @@ h2{
   transform:translate(-50%, 0%);
 }
 
-.reviewbox{
+.reviewbox, .submissionmessage{
   position:absolute;
   top:34vh;
   clear:both;
@@ -197,8 +197,6 @@ h2{
   left:50%;
   transform:translate(-50%, 0%);
   min-width:70vw;
-
-  padding-top:50px;
 
   background-color: rgb(219, 219, 219);
   padding: 1vh 1vw 1vh 1vw;
@@ -209,6 +207,29 @@ h2{
   }
 }
 
+.additionalp p{
+  position:relative;
+  top:10vh;
+  clear:both;
+  left:50%;
+  transform:translate(-50%, 0%);
+  width:100%;
+
+  background-color: rgb(219, 219, 219);
+  padding: 1vh 1vw 1vh 1vw;
+  border-radius:10px;
+  visibility: hidden;
+}
+
+.additionalp div{
+  height:10vh;
+}
+
+.submissionmessage{
+  z-index:5;
+  bottom:0vh;
+}
+
 hr{
   clear:both;
 }
@@ -216,6 +237,10 @@ hr{
 .submitReview{
   clear:both;
   float:right;
+}
+
+.reviewbox .alert{
+  clear:both;
 }
 
 .reviewbox .heading{
