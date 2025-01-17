@@ -1,6 +1,9 @@
+import Cookies from 'js-cookie';
 import React, { useEffect, useState } from 'react';
 
-import HomePageSearchBar from '../Search'
+import HomePageSearchBar from '../Search';
+
+//Cookies.set('minute', 'minute', { expires: 1 / (24 * 60)});
 
 async function queryBackend(email, password) {
     return (async () => {
@@ -18,7 +21,10 @@ async function queryBackend(email, password) {
       if(z.outcome === "incorrect"){
         return true;
       } else{
-        localStorage.setItem("email", email);
+        //localStorage.setItem("email", email);
+
+        //Expires in 15 minutes
+        Cookies.set('email', email, { expires: 1 / (24 * 60 / 15), path: '/'});
         return false;
       }
     })();

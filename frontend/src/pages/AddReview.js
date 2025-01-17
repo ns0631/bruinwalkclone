@@ -42,8 +42,17 @@ function ReviewPage() {
             },
             body: JSON.stringify({dept:dept, class_Name:class_Name, professorName:professorName, yearTaken:yearTaken, quarter:quarter, grade:grade, overallScore:overallScore, ease:ease, workload:workload, clarity:clarity, helpfulness:helpfulness, reviewText:reviewText})
           });
-          setSubmissionStatus(<div className="alert alert-success">
+          const content = await rawResponse.text();
+          if(content === "success"){
+            setSubmissionStatus(<div className="alert alert-success">
                     <strong>Success! </strong>Your review has been submitted.</div>);
+          } else if(content === "failure"){
+            setSubmissionStatus(<div className="alert alert-danger">
+                    <strong>Failure. </strong>You aren't logged in.</div>);
+          } else{
+            setSubmissionStatus(<div className="alert alert-danger">
+                   Something went wrong.</div>);
+          }
         })();
       }
 

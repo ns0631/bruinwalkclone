@@ -1,9 +1,10 @@
 import React from 'react';
+import Cookies from 'js-cookie';
 
 import HomePageSearchBar from '../Search'
 
 function Home(){
-    if(localStorage.getItem("email") === null){
+    if(!Cookies.get("email")){
         return (
             <>
             <ul id="homepagenav" className="nav justify-content-end">

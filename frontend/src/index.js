@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 //import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Cookies from 'js-cookie';
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -19,10 +20,10 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route index element={<Home/>} />
-          <Route path="signup" element={ (localStorage.getItem('email') === null) ? <Signup/> : <Navigate to='/'  />} />
-          <Route path="login" element={(localStorage.getItem('email') === null) ? <Login/> : <Navigate to='/'  />} />
-          <Route path="forgotpassword" element={(localStorage.getItem('email') === null) ? <ForgotPassword/> : <Navigate to='/'  />} />
-          <Route path="addreview" element={(localStorage.getItem('email') !== null) ? <ReviewPage/> : <Navigate to='/login'  />} />
+          <Route path="signup" element={ (!Cookies.get('email')) ? <Signup/> : <Navigate to='/'  />} />
+          <Route path="login" element={(!Cookies.get('email')) ? <Login/> : <Navigate to='/'  />} />
+          <Route path="forgotpassword" element={(!Cookies.get('email')) ? <ForgotPassword/> : <Navigate to='/'  />} />
+          <Route path="addreview" element={(Cookies.get('email')) ? <ReviewPage/> : <Navigate to='/login'  />} />
           <Route path="*" element={<Home/>} />
         </Routes>
       </BrowserRouter>

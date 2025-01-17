@@ -34,23 +34,25 @@ var router = express.Router();
 process.env.SECRET_KEY = crypto.randomBytes(256).toString('hex');
 
 function generateAccessToken(username) {
-    return jwt.sign(username, process.env.SECRET_KEY, { expiresIn: '1800s' });
+    return jwt.sign(username, process.env.SECRET_KEY, { expiresIn: '900s' });
 }
 
 function authenticateToken(req, res, next) {
     if(!req.cookies.jwt){
-        return res.sendStatus(401);
+        console.log("failure");
+        return res.send("failure");
+        //return res.sendStatus(401);
     }
     //const authHeader = req.headers['authorization']
     //const token = authHeader && authHeader.split(' ')[1]
     const token = req.cookies.jwt;
 
-    if (token == null) return res.sendStatus(401)
+    if (token == null) return res.send("failure"); //res.sendStatus(401)
   
     jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
       console.log(err)
   
-      if (err) return res.sendStatus(403)
+      if (err) return res.send("failure"); //res.sendStatus(403)
   
       req.user = user
   
@@ -176,7 +178,8 @@ router.post('/addreview', authenticateToken, function(req, res){
         if(err){
             //If error send Forbidden (403)
             console.log('ERROR: Could not connect to the protected route');
-            res.sendStatus(403);
+            //res.sendStatus(403);
+            res.send('failure');
         } else {
             if(!(parameters.dept && parameters.class_Name && parameters.professorName && parameters.yearTaken && parameters.quarter && parameters.grade && parameters.overallScore && parameters.ease && parameters.workload && parameters.helpfulness && parameters.clarity && parameters.reviewText)){
                 res.sendStatus(422);
@@ -195,7 +198,8 @@ router.post('/addreview', authenticateToken, function(req, res){
             con.query(query, function (err, result, fields) {
                 if (err) throw err;
             });
-            console.log('SUCCESS: Connected to protected route');
+            console.log('success');
+            return res.send('success');
         }
     })
 });
