@@ -78,10 +78,6 @@ footer a{
   height: 50vh;
 }
 
-#dropdownitems{
-  width: 100%;
-}
-
 #dropdownitems p{
   font-family: Verdana;
   background-color: white;
@@ -101,7 +97,14 @@ footer a{
   z-index: 2;
 }
 
+#dropdownitems a{
+  color:black;
+  text-decoration: none;
+  display:block;
+}
+
 #dropdownitems{
+  width:100%;
   position:relative;
   top:-2vh;
 }

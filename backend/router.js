@@ -66,9 +66,10 @@ router.post('/search', function(req, res){
         let query = "SELECT * FROM classes where name like '%" + obj.text + "%' UNION SELECT * FROM professors where name like '%" + obj.text + "%' ORDER BY name;";
         con.query(query, function (err, result, fields) {
         if (err) throw err;
-        const jsonifiedResult = JSON.parse(JSON.stringify(result));
-        console.log(jsonifiedResult);
-        res.send(jsonifiedResult);
+        let arr = [];
+        result = JSON.parse(JSON.stringify(result));
+        console.log(result);
+        res.send(result);
         });
     }
 });
@@ -79,8 +80,7 @@ router.post('/signup', function(req, res){
         let query = "SELECT * FROM users where email='" + obj.email + "';";
         con.query(query, function (err, result, fields) {
         if (err) throw err;
-        const jsonifiedResult = JSON.parse(JSON.stringify(result));
-        console.log(jsonifiedResult);
+        console.log(result);
         if(result.length > 0){
             console.log(JSON.stringify({outcome: "already exists"}));
             res.send(JSON.stringify({outcome: "already exists"}));
@@ -88,8 +88,7 @@ router.post('/signup', function(req, res){
             let query = "INSERT INTO users (email, pw) VALUES ('" + obj.email + "','" + obj.password + "');";
             con.query(query, function (err, result, fields) {
             if (err) throw err;
-            const jsonifiedResult = JSON.parse(JSON.stringify(result));
-            console.log(jsonifiedResult);
+            console.log(result);
             });
 
             var mailOptions = {
@@ -121,7 +120,6 @@ router.post('/login', function(req, res){
         con.query(query, function (err, result, fields) {
             if (err) throw err;
             
-            const jsonifiedResult = JSON.parse(JSON.stringify(result));
             if(result.length == 0){
                 console.log(JSON.stringify({outcome: "incorrect"}));
                 res.send(JSON.stringify({outcome: "incorrect"}));
@@ -146,14 +144,13 @@ router.post('/forgotpassword', function(req, res){
         con.query(query, function (err, result, fields) {
             if (err) throw err;
             
-            const jsonifiedResult = JSON.parse(JSON.stringify(result));
-            console.log(jsonifiedResult);
+            console.log(result);
             if(result.length > 0){
                 var mailOptions = {
                     from: 'nickcrumpet.litty@gmail.com',
                     to: obj.email,
                     subject: 'Bruinwalk 2.0 Login Credentials',
-                    text: 'Your Account Credentials:\nEmail: ' + jsonifiedResult[0].email + '\nPassword: ' + jsonifiedResult[0].pw
+                    text: 'Your Account Credentials:\nEmail: ' + result[0].email + '\nPassword: ' + result[0].pw
                   };
                   
                   transporter.sendMail(mailOptions, function(error, info){
@@ -213,8 +210,7 @@ router.post('/addreviewinfo', function(req, res){
         con.query(query, function (err, result, fields) {
             if (err) throw err;
             
-            const jsonifiedResult = JSON.parse(JSON.stringify(result));
-            let department_id = jsonifiedResult[0].id;
+            let department_id = result[0].id;
             
             let prof_query = "SELECT * FROM professors where department='" + department_id + "';";
             console.log(prof_query);

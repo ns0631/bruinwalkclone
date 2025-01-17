@@ -6,14 +6,15 @@ function modify(text, substring){
     if(text.toUpperCase() === substring.toUpperCase()){
       return <p><b>{text}</b></p>;
     } else if(index === 0){
-      return <p><b>{text.substring(0, substring.length)}</b>{text.substring(substring.length, text.length)}</p>;
+      return <p><a href={'/search?q=' + text}><b>{text.substring(0, substring.length)}</b>{text.substring(substring.length, text.length)}</a></p>;
     } else if(index + substring.length === text.length){
-      return <p>{text.substring(0, index)}<b>{text.substring(index, text.length)}</b></p>;
+      return <p><a href={'/search?q=' + text}>{text.substring(0, index)}<b>{text.substring(index, text.length)}</b></a></p>;
     } else{
       let a = text.substring(0, index);
       let b = text.substr(index, substring.length);
       let c = text.substring(index + substring.length, text.length);
-      return <p>{a}<b>{b}</b>{c}</p>;
+      //window.alert(url);
+      return <p><a href={'/search?q=' + text}>{a}<b>{b}</b>{c}</a></p>;
     }
   }
   
@@ -46,7 +47,7 @@ function modify(text, substring){
         setNewTags([]);
       } else{
         queryBackend(name).then(
-          function(value) {setNewTags(value);}
+          (value) => {setNewTags(value);}
         );
       }
     }, [name]);
