@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ReviewPage from "./pages/AddReview";
 import ForgotPassword from "./pages/ForgotPassword";
+import MainSearchPage from "./pages/MainSearchPage";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -24,6 +25,7 @@ root.render(
           <Route path="login" element={(!Cookies.get('email')) ? <Login/> : <Navigate to='/'  />} />
           <Route path="forgotpassword" element={(!Cookies.get('email')) ? <ForgotPassword/> : <Navigate to='/'  />} />
           <Route path="addreview" element={(Cookies.get('email')) ? <ReviewPage/> : <Navigate to='/login'  />} />
+          <Route path="search" element={<MainSearchPage/>} />
           <Route path="*" element={<Home/>} />
         </Routes>
       </BrowserRouter>

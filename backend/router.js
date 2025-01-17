@@ -63,7 +63,15 @@ function authenticateToken(req, res, next) {
 router.post('/search', function(req, res){
     const obj = JSON.parse(JSON.stringify(req.body));
     if(obj.text){
-        let query = "SELECT * FROM classes where name like '%" + obj.text + "%' UNION SELECT * FROM professors where name like '%" + obj.text + "%' ORDER BY name;";
+        var query = "";
+        if(!obj.restriction || obj.restriction == "both"){
+            query = "SELECT * FROM classes where name like '%" + obj.text + "%' UNION SELECT * FROM professors where name like '%" + obj.text + "%' ORDER BY name;";
+        } else if(obj.restriction == "profs"){
+            query = "SELECT * FROM professors where name like '%" + obj.text + "%' ORDER BY name;";
+        } else {
+            query = "SELECT * FROM classes where name like '%" + obj.text + "%' ORDER BY name;";
+        }
+        console.log(query);
         con.query(query, function (err, result, fields) {
         if (err) throw err;
         let arr = [];

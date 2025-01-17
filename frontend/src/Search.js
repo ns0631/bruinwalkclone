@@ -13,7 +13,9 @@ function modify(text, substring){
       let a = text.substring(0, index);
       let b = text.substr(index, substring.length);
       let c = text.substring(index + substring.length, text.length);
-      //window.alert(url);
+      //window.alert(text.replace(/ /g, "+"));
+      //text = text.replace(//g, "+");
+
       return <p><a href={'/search?q=' + text}>{a}<b>{b}</b>{c}</a></p>;
     }
   }
