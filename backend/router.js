@@ -132,7 +132,7 @@ router.post('/login', function(req, res){
                 console.log(JSON.stringify({outcome: "incorrect"}));
                 res.send(JSON.stringify({outcome: "incorrect"}));
             } else{
-                const token = generateAccessToken({ username: email });
+                const token = generateAccessToken({ username: email, id: result[0].id  });
                 console.log(JSON.stringify({outcome: "correct", token:token}));
 
                 res.cookie("jwt", token, {
@@ -198,12 +198,14 @@ router.post('/addreview', authenticateToken, function(req, res){
             }
 
             //If token is successfully verified, we can send the autorized data 
-            let query = `INSERT INTO reviews (class, prof, recordDate, grade, quarterTaken, yearTaken, overallRating, ease, helpfulness, clarity, workload, reviewBody) VALUES (${parameters.class_Name},${parameters.professorName},"${generateDatabaseDateTime(datenow)}","${parameters.grade}","${parameters.quarter}",${parameters.yearTaken},${parseInt(parameters.overallScore)},${parseInt(parameters.ease)},${parseInt(parameters.helpfulness)},${parseInt(parameters.clarity)},${parseInt(parameters.workload)},"${parameters.reviewText}")`;
+            const decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+            var userid = decoded.id;
+
+            let query = `INSERT INTO reviews (class, prof, userid, recordDate, grade, quarterTaken, yearTaken, overallRating, ease, helpfulness, clarity, workload, reviewBody) VALUES (${parameters.class_Name},${parameters.professorName},${userid},"${generateDatabaseDateTime(datenow)}","${parameters.grade}","${parameters.quarter}",${parameters.yearTaken},${parseInt(parameters.overallScore)},${parseInt(parameters.ease)},${parseInt(parameters.helpfulness)},${parseInt(parameters.clarity)},${parseInt(parameters.workload)},"${parameters.reviewText}")`;
             console.log(query);
             con.query(query, function (err, result, fields) {
                 if (err) throw err;
             });
-            console.log('success');
             return res.send('success');
         }
     })
@@ -212,7 +214,6 @@ router.post('/addreview', authenticateToken, function(req, res){
 router.post('/addreviewinfo', function(req, res){
     const obj = JSON.parse(JSON.stringify(req.body));
     if(obj.department){
-        console.log("Department: " + obj.department);
         let query = "SELECT * FROM departments where name='" + obj.department + "';";
         console.log(query);
         con.query(query, function (err, result, fields) {
@@ -252,6 +253,37 @@ router.post('/addreviewinfo', function(req, res){
             });
         });
     }
+});
+
+router.post('/myreviews', authenticateToken, function(req, res){
+    //verify the JWT token generated for the user
+    const parameters = JSON.parse(JSON.stringify(req.body));
+    jwt.verify(req.cookies.jwt, process.env.SECRET_KEY, (err, authorizedData) => {
+        if(err){
+            //If error send Forbidden (403)
+            console.log('ERROR: Could not connect to the protected route');
+            //res.sendStatus(403);
+            res.send('failure');
+        } else {
+            let datenow = new Date();
+
+            function generateDatabaseDateTime(date) {
+                return date.toISOString().replace("T"," ").substring(0, 19);
+            }
+
+            const decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+            var userid = decoded.id;
+
+            //If token is successfully verified, we can send the autorized data 
+            let query = `SELECT * FROM reviews WHERE userid=${userid}`;
+            console.log(query);
+            con.query(query, function (err, result, fields) {
+                if (err) throw err;
+                console.log(result);
+                return res.send(result);
+            });
+        }
+    })
 });
 
 //export this router to use in our index.js

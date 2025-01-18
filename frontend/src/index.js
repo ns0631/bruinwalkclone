@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-//import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Cookies from 'js-cookie';
 
@@ -10,9 +9,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Logout from "./pages/Logout";
+
 import ReviewPage from "./pages/AddReview";
 import ForgotPassword from "./pages/ForgotPassword";
 import MainSearchPage from "./pages/MainSearchPage";
+import MyReviews from "./pages/MyReviews";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,9 +25,13 @@ root.render(
           <Route index element={<Home/>} />
           <Route path="signup" element={ (!Cookies.get('email')) ? <Signup/> : <Navigate to='/'  />} />
           <Route path="login" element={(!Cookies.get('email')) ? <Login/> : <Navigate to='/'  />} />
+          <Route path="logout" element={(Cookies.get('email')) ? <Logout/> : <Navigate to='/'  />} />
+
           <Route path="forgotpassword" element={(!Cookies.get('email')) ? <ForgotPassword/> : <Navigate to='/'  />} />
           <Route path="addreview" element={(Cookies.get('email')) ? <ReviewPage/> : <Navigate to='/login'  />} />
           <Route path="search" element={<MainSearchPage/>} />
+          <Route path="myreviews" element={(Cookies.get('email')) ? <MyReviews/> : <Navigate to='/login'  />} />
+
           <Route path="*" element={<Home/>} />
         </Routes>
       </BrowserRouter>

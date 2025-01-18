@@ -358,7 +358,7 @@ hr{
   margin: 0 2vh 2vh 2vh;
 }
 
-#contentofinterest{
+.contentofinterest{
   text-align: center;
   position:absolute;
   top:25vh;
@@ -367,7 +367,12 @@ hr{
   min-width:50vw;
 }
 
-#contentofinterest p{
+.contentofinterest p{
   background-color: white;
   border-radius:10px;
+}
+
+.userreview{
+  backrgound-color: gray;
+  border-radius: 10px;
 }

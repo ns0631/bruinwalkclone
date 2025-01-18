@@ -63,7 +63,7 @@ function MainSearchPage() {
                 <div className="signupsearchbar"><HomePageSearchBar/></div>
             </div>
             
-            <div id="contentofinterest">
+            <div className="contentofinterest">
                 {contentofinterest}
             </div>
 

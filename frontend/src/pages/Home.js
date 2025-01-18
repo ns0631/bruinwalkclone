@@ -29,7 +29,10 @@ function Home(){
             <>
             <ul id="homepagenav" className="nav justify-content-end">
                 <li className="nav-item">
-                <a className="nav-link" href="/">My Account</a>
+                <a className="nav-link" href="/logout">Log Out</a>
+                </li>
+                <li className="nav-item">
+                <a className="nav-link" href="/myreviews">My Reviews</a>
                 </li>
                 <li className="nav-item">
                 <a className="nav-link" href="/addreview">Add Review</a>
