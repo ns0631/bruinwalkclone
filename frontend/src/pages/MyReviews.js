@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import { EditableReview } from "../Reviews";
 import HomePageSearchBar from '../Search'
 
 function MyReviews() {
@@ -23,12 +23,7 @@ function MyReviews() {
             return;
           }
           const z = JSON.parse(content);
-          /*let finished_data = z.map((a) => {return <p>{a.name}</p>});
-          if(finished_data.length == 0){
-            return <p>No results match your search.</p>
-          }
-          return finished_data;*/
-          setReviews(z.map((a) => <p>{a.reviewBody}</p>));
+          setReviews(z.map((a) => EditableReview(a)));
         })();
       }
 
@@ -51,9 +46,13 @@ function MyReviews() {
             </ul>
             <div className="signupsearchbar"><HomePageSearchBar/></div>
         </div>
-       <div className="contentofinterest">
+       <div className="ownreviews">
         {reviews}
        </div>
+       <div className="alert deletedmessage alert-success alert-dismissible">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span id="actualdeletemessage"><strong>Success! </strong>Your review has been deleted.</span>
+        </div>
     </>
     );
 }

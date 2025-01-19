@@ -211,6 +211,31 @@ router.post('/addreview', authenticateToken, function(req, res){
     })
 });
 
+router.post('/deletereview', authenticateToken, function(req, res){
+    //verify the JWT token generated for the user
+    const parameters = JSON.parse(JSON.stringify(req.body));
+    jwt.verify(req.cookies.jwt, process.env.SECRET_KEY, (err, authorizedData) => {
+        if(err){
+            //If error send Forbidden (403)
+            console.log('ERROR: Could not connect to the protected route');
+            //res.sendStatus(403);
+            res.send('failure');
+        } else {
+            if(!(parameters.id)){
+                res.sendStatus(422);
+                return;
+            }
+
+            let query = `DELETE FROM reviews WHERE id=${parameters.id};`;
+            console.log(query);
+            con.query(query, function (err, result, fields) {
+                if (err) throw err;
+            });
+            return res.send('success');
+        }
+    })
+});
+
 router.post('/addreviewinfo', function(req, res){
     const obj = JSON.parse(JSON.stringify(req.body));
     if(obj.department){
@@ -276,11 +301,43 @@ router.post('/myreviews', authenticateToken, function(req, res){
 
             //If token is successfully verified, we can send the autorized data 
             let query = `SELECT * FROM reviews WHERE userid=${userid}`;
+
             console.log(query);
             con.query(query, function (err, result, fields) {
                 if (err) throw err;
-                console.log(result);
-                return res.send(result);
+
+                console.log("start");
+
+                let parsedresult = JSON.parse(JSON.stringify(result));
+                for(let i = 0;i < parsedresult.length ; i++){
+                    let rev = result[i];
+                    let classid = rev.class;
+                    let profid = rev.prof;
+
+                    let classquery = `SELECT * FROM classes WHERE id=${classid}`;
+                    let profquery = `SELECT * FROM professors WHERE id=${profid}`;
+
+                    con.query(profquery, function (err, result, fields) {
+                        if (err) throw err;
+                        if(result.length > 0){
+                            parsedresult[i]["prof"] = JSON.parse(JSON.stringify(result[0])).name;
+                        }   
+                    });
+
+                    con.query(classquery, function (err, result, fields) {
+                        if (err) throw err;
+                        if(result.length > 0){
+                            parsedresult[i]["class"] = JSON.parse(JSON.stringify(result[0])).name;
+                            if(i == parsedresult.length - 1){
+                                console.log(parsedresult);
+                                return res.send(parsedresult);
+                            }
+                        }
+                    });
+                }
+                //reviewText += "]";
+                //console.log(reviewText);
+                //return res.send(reviewText);
             });
         }
     })
