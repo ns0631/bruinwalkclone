@@ -306,8 +306,6 @@ router.post('/myreviews', authenticateToken, function(req, res){
             con.query(query, function (err, result, fields) {
                 if (err) throw err;
 
-                console.log("start");
-
                 let parsedresult = JSON.parse(JSON.stringify(result));
                 for(let i = 0;i < parsedresult.length ; i++){
                     let rev = result[i];
@@ -335,10 +333,117 @@ router.post('/myreviews', authenticateToken, function(req, res){
                         }
                     });
                 }
-                //reviewText += "]";
-                //console.log(reviewText);
-                //return res.send(reviewText);
             });
+        }
+    })
+});
+
+router.post('/fetchreviewbyid', authenticateToken, function(req, res){
+    const parameters = JSON.parse(JSON.stringify(req.body));
+    console.log(parameters.id);
+    //verify the JWT token generated for the user
+    jwt.verify(req.cookies.jwt, process.env.SECRET_KEY, (err, authorizedData) => {
+        if(err){
+            //If error send Forbidden (403)
+            console.log('ERROR: Could not connect to the protected route');
+            //res.sendStatus(403);
+            res.send('failure');
+        } else {
+            if(!(parameters.id)){
+                res.send('failure');
+                return;
+            }
+
+            const decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+            var userid = decoded.id;
+
+            let query = `SELECT * FROM reviews WHERE id=${parseInt(parameters.id)};`;
+            console.log(query);
+            con.query(query, function (err, result, fields) {
+                if (err) throw err;
+                if(result.length == 0){
+                    return res.send("not found");
+                } else{
+                    let parsedresult = JSON.parse(JSON.stringify(result))[0];
+                    let classid = parsedresult.class;
+                    let profid = parsedresult.prof;
+
+                    if(userid !== parsedresult.userid){
+                        console.log(userid);
+                        console.log(parsedresult.userid);
+                        return res.send("failure");
+                    }
+
+                    let classquery = `SELECT * FROM classes WHERE id=${classid}`;
+                    let profquery = `SELECT * FROM professors WHERE id=${profid}`;
+
+                    con.query(profquery, function (err, result, fields) {
+                        if (err) throw err;
+                        if(result.length > 0){
+                            parsedresult["prof"] = JSON.parse(JSON.stringify(result[0])).name;
+                        }   
+                    });
+
+                    con.query(classquery, function (err, result, fields) {
+                        if (err) throw err;
+                        if(result.length > 0){
+                            parsedresult["class"] = JSON.parse(JSON.stringify(result[0])).name;
+                            console.log(parsedresult);
+                            return res.send(parsedresult);
+                        }
+                    });
+                }
+            });
+        }
+    })
+});
+
+
+router.post('/editreview', authenticateToken, function(req, res){
+    //verify the JWT token generated for the user
+    const parameters = JSON.parse(JSON.stringify(req.body));
+    jwt.verify(req.cookies.jwt, process.env.SECRET_KEY, (err, authorizedData) => {
+        if(err){
+            //If error send Forbidden (403)
+            console.log('ERROR: Could not connect to the protected route');
+            //res.sendStatus(403);
+            res.send('failure');
+        } else {
+            if(!(parameters.id && parameters.overallScore && parameters.ease && parameters.workload && parameters.helpfulness && parameters.clarity && parameters.reviewText)){
+                res.sendStatus(422);
+                return;
+            }
+
+            let datenow = new Date();
+
+            function generateDatabaseDateTime(date) {
+                return date.toISOString().replace("T"," ").substring(0, 19);
+            }
+
+            //If token is successfully verified, we can send the autorized data 
+            const decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+            var userid = decoded.id;
+
+            let query = `SELECT * FROM reviews WHERE id=${parseInt(parameters.id)};`;
+            console.log(query);
+            con.query(query, function (err, result, fields) {
+                if (err) throw err;
+                if(result.length == 0){
+                    return res.send("not found");
+                } else{
+                    let parsedresult = JSON.parse(JSON.stringify(result))[0];
+                    if(userid !== parsedresult.userid){
+                        return res.send("failure");
+                    }
+                }
+            });
+
+            let updatequery = `UPDATE reviews SET recordDate="${generateDatabaseDateTime(datenow)}",overallRating=${parseInt(parameters.overallScore)},ease=${parseInt(parameters.ease)},helpfulness=${parseInt(parameters.helpfulness)},clarity=${parseInt(parameters.clarity)},workload=${parseInt(parameters.workload)},reviewBody="${parameters.reviewText}" WHERE id=${parameters.id}`;
+            console.log(updatequery);
+            con.query(updatequery, function (err, result, fields) {
+                if (err) throw err;
+            });
+            return res.send('success');
         }
     })
 });

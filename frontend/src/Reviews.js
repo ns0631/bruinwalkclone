@@ -1,3 +1,5 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -40,6 +42,12 @@ async function deleteReview(id) {
     })();
 }
 
+function openEditReviewPage(data){
+    return (
+        <Navigate to='/'  />
+    );
+}
+
 function DeleteButton(props) {
     const [show, setShow] = useState(false);
   
@@ -59,7 +67,7 @@ function DeleteButton(props) {
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={ () => {deleteReview(props.id); handleClose()} }>
+            <Button variant="danger" onClick={ () => {deleteReview(props.id); handleClose()} }>
               Delete
             </Button>
           </Modal.Footer>
@@ -76,16 +84,51 @@ function EditableReview(data){
     let professor = data.prof;
     let quarter = data.quarterTaken;
     let yearTaken = data.yearTaken;
-    
+    let newNav = "";
+
     return (
         <>
             <div className="userreview editable">
                 <p className="publishdate">{days[date.getDay()]}, {months[date.getMonth()]} {date.getDate()}, {date.getFullYear()}</p>
                 <p className="courseinfo">{class_Name} — {professor}</p>
                 <p className="timetaken">{quarter} {yearTaken}</p>
+
+                <table class="ratingtable table table-sm">
+                        <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Score (1-5)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Overall</td>
+                            <td>{data.overallRating}</td>
+                        </tr>
+                        <tr>
+                            <td>Ease</td>
+                            <td>{data.ease}</td>
+                        </tr>
+                        <tr>
+                            <td>Workload</td>
+                            <td>{data.workload}</td>
+                        </tr>
+                        <tr>
+                            <td>Clarity</td>
+                            <td>{data.clarity}</td>
+                        </tr>
+                        <tr>
+                            <td>Helpfulness</td>
+                            <td>{data.helpfulness}</td>
+                        </tr>
+                        </tbody>
+                </table>
+
                 <div className="reviewbody"><p>{text}</p></div>
 
                 <DeleteButton id={data.id}/>
+                <button type="button" className="editreviewbutton btn btn-primary" onClick={() => { window.location.assign("/editreview?id=" + data.id); }}>Edit Review <i class="fa fa-pencil fa-fw"></i></button>
+                {newNav}
             </div>
         </>
     );

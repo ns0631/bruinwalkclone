@@ -49,7 +49,13 @@ function modify(text, substring){
         setNewTags([]);
       } else{
         queryBackend(name).then(
-          (value) => {setNewTags(value);}
+          (value) => {
+            if(value.length >0){
+              setNewTags(value);
+            } else{
+              setNewTags([<p>No results.</p>])
+            }
+          }
         );
       }
     }, [name]);

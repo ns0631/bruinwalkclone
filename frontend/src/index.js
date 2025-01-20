@@ -15,6 +15,7 @@ import ReviewPage from "./pages/AddReview";
 import ForgotPassword from "./pages/ForgotPassword";
 import MainSearchPage from "./pages/MainSearchPage";
 import MyReviews from "./pages/MyReviews";
+import EditReview from "./pages/EditReview";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -30,7 +31,9 @@ root.render(
           <Route path="forgotpassword" element={(!Cookies.get('email')) ? <ForgotPassword/> : <Navigate to='/'  />} />
           <Route path="addreview" element={(Cookies.get('email')) ? <ReviewPage/> : <Navigate to='/login'  />} />
           <Route path="search" element={<MainSearchPage/>} />
+          
           <Route path="myreviews" element={(Cookies.get('email')) ? <MyReviews/> : <Navigate to='/login'  />} />
+          <Route path="editreview" element={(Cookies.get('email')) ? <EditReview/> : <Navigate to='/login' />} />
 
           <Route path="*" element={<Home/>} />
         </Routes>
