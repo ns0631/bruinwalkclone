@@ -24,7 +24,7 @@ async function queryBackend(email, password) {
         //localStorage.setItem("email", email);
 
         //Expires in 15 minutes
-        Cookies.set('email', email, { expires: 1 / (24 * 60 / 15), path: '/'});
+        Cookies.set('email', email, { expires: 1 / (24 * 60 / 30), path: '/'});
         return false;
       }
     })();

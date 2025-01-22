@@ -358,20 +358,51 @@ hr{
 }
 
 .contentofinterest{
+  z-index:-10;
   text-align: center;
   position:absolute;
   top:25vh;
   left:65%;
   transform:translate(-65%, 0%);
   min-width:50vw;
+  min-height: 10vh;
 }
 
 .contentofinterest p{
   background-color: white;
   border-radius:10px;
+  overflow:auto;
+  border-color: 1px solid black;
+  z-index:-1;
+}
+
+.contentofinterest div{
+  margin: 1vh 1vw 1vh 1vw;
+}
+
+.classcode{
+  float:left;
+  background-color:rgb(47, 81, 206);
+  border-radius:10px;
+  padding: 0.1vh 0.1vw 0.1vh 0.1vw;
+  color:white;
+}
+
+.formalclassname{
+  clear:both;
+  float:left;
+}
+
+.avgclassrating{
+  float:right;
+  margin: 0.2vh 0.2vw 0.2vh 0.2vw;
+  border-radius: 5px;
+  color:white;
+  padding: 0.6vh 0.3vw 0.6vh 0.3vw;
 }
 
 .ownreviews{
+  z-index:-5;
   text-align: center;
   position:absolute;
   top:25vh;
@@ -464,4 +495,22 @@ hr{
   top: 25vh;
   left: 50%;
   transform: translate(-50%, 0);
+}
+
+.proflistingsforcourse{
+  display:flex;
+  flex-wrap: wrap;
+  clear:both;
+  margin:auto;
+}
+
+.profprofile{
+  background-color: rgb(206, 203, 203);
+  padding: 0.25vh 0.25vw 0.25vh 0.25vw;
+  border-radius: 10px;
+  min-width:45%;
+}
+.overallratinglabel{
+  font-size:12px;
+  float:right;
 }

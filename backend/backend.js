@@ -19,7 +19,6 @@ app.use(cookieParser());
 
 var router = require('./router.js');
 
-
 //both index.js and things.js should be in same directory
 app.use('/api', router);
  

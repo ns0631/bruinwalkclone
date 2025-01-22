@@ -71,12 +71,10 @@ router.post('/search', function(req, res){
         } else {
             query = "SELECT * FROM classes where name like '%" + obj.text + "%' ORDER BY name;";
         }
-        console.log(query);
         con.query(query, function (err, result, fields) {
         if (err) throw err;
         let arr = [];
         result = JSON.parse(JSON.stringify(result));
-        console.log(result);
         res.send(result);
         });
     }
@@ -88,15 +86,12 @@ router.post('/signup', function(req, res){
         let query = "SELECT * FROM users where email='" + obj.email + "';";
         con.query(query, function (err, result, fields) {
         if (err) throw err;
-        console.log(result);
         if(result.length > 0){
-            console.log(JSON.stringify({outcome: "already exists"}));
             res.send(JSON.stringify({outcome: "already exists"}));
         } else{
             let query = "INSERT INTO users (email, pw) VALUES ('" + obj.email + "','" + obj.password + "');";
             con.query(query, function (err, result, fields) {
             if (err) throw err;
-            console.log(result);
             });
 
             var mailOptions = {
@@ -129,15 +124,13 @@ router.post('/login', function(req, res){
             if (err) throw err;
             
             if(result.length == 0){
-                console.log(JSON.stringify({outcome: "incorrect"}));
                 res.send(JSON.stringify({outcome: "incorrect"}));
             } else{
                 const token = generateAccessToken({ username: email, id: result[0].id  });
-                console.log(JSON.stringify({outcome: "correct", token:token}));
 
                 res.cookie("jwt", token, {
                     httpOnly: true,
-                    expires: dayjs().add(60, "minutes").toDate()
+                    expires: dayjs().add(30, "minutes").toDate()
                   });        
                 res.json({outcome: "correct", token:token});  
             }
@@ -152,7 +145,6 @@ router.post('/forgotpassword', function(req, res){
         con.query(query, function (err, result, fields) {
             if (err) throw err;
             
-            console.log(result);
             if(result.length > 0){
                 var mailOptions = {
                     from: 'nickcrumpet.litty@gmail.com',
@@ -202,7 +194,6 @@ router.post('/addreview', authenticateToken, function(req, res){
             var userid = decoded.id;
 
             let query = `INSERT INTO reviews (class, prof, userid, recordDate, grade, quarterTaken, yearTaken, overallRating, ease, helpfulness, clarity, workload, reviewBody) VALUES (${parameters.class_Name},${parameters.professorName},${userid},"${generateDatabaseDateTime(datenow)}","${parameters.grade}","${parameters.quarter}",${parameters.yearTaken},${parseInt(parameters.overallScore)},${parseInt(parameters.ease)},${parseInt(parameters.helpfulness)},${parseInt(parameters.clarity)},${parseInt(parameters.workload)},"${parameters.reviewText}")`;
-            console.log(query);
             con.query(query, function (err, result, fields) {
                 if (err) throw err;
             });
@@ -240,14 +231,12 @@ router.post('/addreviewinfo', function(req, res){
     const obj = JSON.parse(JSON.stringify(req.body));
     if(obj.department){
         let query = "SELECT * FROM departments where name='" + obj.department + "';";
-        console.log(query);
         con.query(query, function (err, result, fields) {
             if (err) throw err;
             
             let department_id = result[0].id;
             
             let prof_query = "SELECT * FROM professors where department='" + department_id + "';";
-            console.log(prof_query);
 
             con.query(prof_query, function (err, result, fields) {
                 if (err) throw err;
@@ -446,6 +435,94 @@ router.post('/editreview', authenticateToken, function(req, res){
             return res.send('success');
         }
     })
+});
+
+async function fetchProfessorNameById(id){
+    let query = `SELECT * FROM professors where id=${id}`;
+
+    const name = await new Promise((resolve) => {
+        con.query(query, function (err, result, fields) {
+            if (err) throw err;
+            
+            let jsonifiedresult = JSON.parse(JSON.stringify(result[0]));
+            resolve(jsonifiedresult.name);
+        });
+    })
+    return name;
+}
+
+async function fetchAllReviewsForClass(id){
+    let query = `SELECT * FROM reviews where class=${id}`;
+
+    const allReviews = await new Promise( (resolve) => {
+        con.query(query, function (err, result, fields) {
+            if (err) throw err;
+            
+            let jsonifiedresult = JSON.parse(JSON.stringify(result));
+            resolve(jsonifiedresult);
+        });
+    } ) 
+    return allReviews;
+}
+
+async function fetchAvgRatingForClass(id){
+    const reviews = await fetchAllReviewsForClass(id);
+    let score = 0;
+    let count = 0;
+    for(let x of reviews){
+        console.log(x);
+        score += x.overallRating;
+        count += 1;
+    }
+    if(score == 0 || count == 0){
+        return "N/A";
+    }
+    return (score/count).toFixed(1);
+}
+
+async function fetchProfsForClass(id){
+    const reviews = await fetchAllReviewsForClass(id);
+    let profs = [];
+    for(let review of reviews){
+        profs.push( await fetchProfessorNameById(review.prof) );
+    }
+    if(profs.length > 4){
+        return profs.slice(0, 4);
+    }
+    return profs;
+}
+
+router.post('/overviewinfo', function(req, res){
+    const obj = JSON.parse(JSON.stringify(req.body));
+    if(obj.id && (obj.prof !== null)){
+        if(obj.prof === 1){
+            //Professors
+            let query = `SELECT * FROM professors where id=${obj.id}`;
+            con.query(query, function (err, result, fields) {
+                if (err) throw err;
+                
+                let jsonifiedresult = JSON.stringify(result[0]);
+                return res.send(jsonifiedresult);
+            });
+        } else if(obj.prof === 0){
+            //Classes
+
+            let query = `SELECT * FROM classes where id=${obj.id}`;
+            console.log("initial sql query: " + query);
+            con.query(query, async function (err, result, fields) {
+                if (err) throw err;
+
+                let jsonifiedresult = JSON.parse(JSON.stringify(result[0]));
+                const avgRating = await fetchAvgRatingForClass(obj.id);
+                const profs = await fetchProfsForClass(obj.id);
+
+                jsonifiedresult['profs'] = profs;
+                jsonifiedresult['avgRating'] = avgRating;
+
+                return res.send(jsonifiedresult);
+            });
+        }
+    }
 });
 
 //export this router to use in our index.js

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {useSearchParams} from "react-router-dom";
 import HomePageSearchBar from '../Search';
 
+import ProfOverview from "../Professors";
+import ClassOverview from "../ClassInfo";
+
 function MainSearchPage() {
     async function initialSearch(input) {
         return (async () => {
@@ -15,7 +18,16 @@ function MainSearchPage() {
           });
           const content = await rawResponse.text();
           const z = JSON.parse(content);
-          let finished_data = z.map((a) => {return <p>{a.name}</p>});
+          
+          let finished_data = z.map((a) => {
+            if(a.professor === 1){
+                return <ProfOverview id={a.id} />
+            } else{
+                return <ClassOverview id={a.id} />
+            }
+          
+          });
+          
           if(finished_data.length == 0){
             return <p>No results match your search.</p>
           }
