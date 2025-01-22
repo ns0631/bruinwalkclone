@@ -18,7 +18,7 @@ async function initialSearch(id) {
       if(z.avgRating === "N/A"){
         z.backgroundColor = "gray";
       } else if(z.avgRating > 4.5){
-        z.backgroundColor = "#05450a";
+        z.backgroundColor = "#066306";
       } else if(z.avgRating > 3.5){
         z.backgroundColor = "#0cb31a";
       } else if(z.avgRating > 2.5){
@@ -44,8 +44,23 @@ function ClassOverview(props){
         setClassCode(output.name);
         setClassName(output.fullName);
         setAvgRating(output.avgRating);
-        setProfs(output.profs.map((a) => {return <div className="profprofile">{a}</div>;} ));
-        //setProfs(output.profs);
+        setProfs(output.profs.map((a) => {
+            let textColor;
+            if(a[1] === "N/A"){
+                textColor = "black";
+              } else if(a[1] > 4.5){
+                textColor = "#066306";
+              } else if(a[1] > 3.5){
+                textColor = "#0cb31a";
+              } else if(a[1] > 2.5){
+                textColor = "#e8f007";
+              } else if(a[1] > 1.5){
+                textColor = "orange";
+              } else{
+                textColor = "red";
+              }
+            return <div className="profprofile">{a[0]}<span style={{color:textColor}} className="avgratingprofprofile">{a[1]}</span></div>;
+        } ));
         setBackgroundColor(output.backgroundColor);
     } ) } , [] );
 

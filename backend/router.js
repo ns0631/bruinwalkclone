@@ -230,40 +230,33 @@ router.post('/deletereview', authenticateToken, function(req, res){
 router.post('/addreviewinfo', function(req, res){
     const obj = JSON.parse(JSON.stringify(req.body));
     if(obj.department){
-        let query = "SELECT * FROM departments where name='" + obj.department + "';";
-        con.query(query, function (err, result, fields) {
-            if (err) throw err;
-            
-            let department_id = result[0].id;
-            
-            let prof_query = "SELECT * FROM professors where department='" + department_id + "';";
+        let prof_query = `SELECT
+                            p.id,
+                            p.name
+                        from departments d join professors p
+                        on d.name="${obj.department}" and p.department = d.id;`;
+        
 
-            con.query(prof_query, function (err, result, fields) {
+        let class_query = `SELECT
+                        c.id,
+                        c.name
+                    from departments d join classes c
+                    on d.name="${obj.department}" and c.department = d.id;`;
+        
+        console.log(prof_query);
+        console.log(class_query);
+        con.query(prof_query, function (err, prof_result, fields) {
+            if (err) throw err;
+
+            con.query(class_query, function (err, class_result, fields) {
                 if (err) throw err;
                 
-                let professors_obj = JSON.parse(JSON.stringify(result));
-                let class_query = "SELECT * FROM classes where department='" + department_id + "';";
-                console.log(class_query);
-                con.query(class_query, function (err, result, fields) {
-                    if (err) throw err;
-                    
-                    let classes_obj = JSON.parse(JSON.stringify(result));
-
-                    let classes = [];
-                    let profs = [];
-
-                    for(let db_class of classes_obj){
-                        classes.push({name: db_class.name, id: db_class.id});
-                    }
-
-                    for(let db_prof of professors_obj){
-                        profs.push({name: db_prof.name, id: db_prof.id});
-                    }
-
-                    let final_result = JSON.stringify({professors: profs, classes: classes});
-                    console.log(final_result);
-                    res.send(final_result);
-                });
+                let profs = JSON.parse(JSON.stringify(prof_result));
+                let classes = JSON.parse(JSON.stringify(class_result));
+                
+                let final_result = JSON.stringify({professors: profs, classes: classes});
+                console.log(final_result);
+                res.send(final_result);
             });
         });
     }
@@ -346,7 +339,22 @@ router.post('/fetchreviewbyid', authenticateToken, function(req, res){
             const decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
             var userid = decoded.id;
 
-            let query = `SELECT * FROM reviews WHERE id=${parseInt(parameters.id)};`;
+            let query = `SELECT
+                        a.id,
+                        a.userid,
+                        a.reviewBody,
+                        a.overallRating,
+                        a.helpfulness,
+                        a.clarity,
+                        a.ease,
+                        a.workload,
+                        a.quarterTaken,
+                        a.yearTaken,
+                        a.recordDate,
+                        b.name AS prof,
+                        c.name AS class
+                    from reviews a join professors b join classes c
+                    on a.id = ${parseInt(parameters.id)} and b.id = a.prof and c.id = a.class;`;
             console.log(query);
             con.query(query, function (err, result, fields) {
                 if (err) throw err;
@@ -354,8 +362,6 @@ router.post('/fetchreviewbyid', authenticateToken, function(req, res){
                     return res.send("not found");
                 } else{
                     let parsedresult = JSON.parse(JSON.stringify(result))[0];
-                    let classid = parsedresult.class;
-                    let profid = parsedresult.prof;
 
                     if(userid !== parsedresult.userid){
                         console.log(userid);
@@ -363,24 +369,7 @@ router.post('/fetchreviewbyid', authenticateToken, function(req, res){
                         return res.send("failure");
                     }
 
-                    let classquery = `SELECT * FROM classes WHERE id=${classid}`;
-                    let profquery = `SELECT * FROM professors WHERE id=${profid}`;
-
-                    con.query(profquery, function (err, result, fields) {
-                        if (err) throw err;
-                        if(result.length > 0){
-                            parsedresult["prof"] = JSON.parse(JSON.stringify(result[0])).name;
-                        }   
-                    });
-
-                    con.query(classquery, function (err, result, fields) {
-                        if (err) throw err;
-                        if(result.length > 0){
-                            parsedresult["class"] = JSON.parse(JSON.stringify(result[0])).name;
-                            console.log(parsedresult);
-                            return res.send(parsedresult);
-                        }
-                    });
+                    return res.send(parsedresult);
                 }
             });
         }
@@ -451,8 +440,56 @@ async function fetchProfessorNameById(id){
     return name;
 }
 
+
+async function fetchClassNameById(id){
+    let query = `SELECT * FROM classes where id=${id}`;
+
+    const name = await new Promise((resolve) => {
+        con.query(query, function (err, result, fields) {
+            if (err) throw err;
+            if(result.length === 0){
+                return false;
+            }
+            let jsonifiedresult = JSON.parse(JSON.stringify(result[0]));
+            resolve(jsonifiedresult.name);
+        });
+    })
+    return name;
+}
+
+
+async function fetchClassIdByName(name){
+    let query = `SELECT * FROM classes where name='${name}'`;
+
+    const id = await new Promise((resolve) => {
+        con.query(query, function (err, result, fields) {
+            if (err) throw err;
+            if(result.length === 0){
+                return false;
+            }
+            let jsonifiedresult = JSON.parse(JSON.stringify(result[0]));
+            resolve(jsonifiedresult.id);
+        });
+    })
+    return id;
+}
+
 async function fetchAllReviewsForClass(id){
     let query = `SELECT * FROM reviews where class=${id}`;
+
+    const allReviews = await new Promise( (resolve) => {
+        con.query(query, function (err, result, fields) {
+            if (err) throw err;
+            
+            let jsonifiedresult = JSON.parse(JSON.stringify(result));
+            resolve(jsonifiedresult);
+        });
+    } ) 
+    return allReviews;
+}
+
+async function fetchAllReviewsForProf(id){
+    let query = `SELECT * FROM reviews where prof=${id}`;
 
     const allReviews = await new Promise( (resolve) => {
         con.query(query, function (err, result, fields) {
@@ -480,11 +517,27 @@ async function fetchAvgRatingForClass(id){
     return (score/count).toFixed(1);
 }
 
+
+async function fetchAvgRatingForProf(id){
+    const reviews = await fetchAllReviewsForProf(id);
+    let score = 0;
+    let count = 0;
+    for(let x of reviews){
+        console.log(x);
+        score += x.overallRating;
+        count += 1;
+    }
+    if(score == 0 || count == 0){
+        return "N/A";
+    }
+    return (score/count).toFixed(1);
+}
+
 async function fetchProfsForClass(id){
     const reviews = await fetchAllReviewsForClass(id);
     let profs = [];
     for(let review of reviews){
-        profs.push( await fetchProfessorNameById(review.prof) );
+        profs.push( [await fetchProfessorNameById(review.prof), await fetchAvgRatingForProf(review.prof)] );
     }
     if(profs.length > 4){
         return profs.slice(0, 4);
@@ -517,10 +570,30 @@ router.post('/overviewinfo', function(req, res){
                 const profs = await fetchProfsForClass(obj.id);
 
                 jsonifiedresult['profs'] = profs;
+                console.log(profs);
                 jsonifiedresult['avgRating'] = avgRating;
 
                 return res.send(jsonifiedresult);
             });
+        }
+    }
+});
+
+router.post('/classoverview', async function(req, res){
+    const obj = JSON.parse(JSON.stringify(req.body));
+    if(obj.classname){
+        //Professors
+        let classid = await fetchClassIdByName(obj.classname);
+        if(!classid){
+            return res.send("failure");
+        } else{
+            let query = `SELECT * FROM reviews where class=${classid}`;
+            con.query(query, async function (err, result, fields) {
+                if (err) throw err;
+                
+                let jsonifiedresult = JSON.stringify(result[0]);
+                return res.send(jsonifiedresult);
+            });   
         }
     }
 });

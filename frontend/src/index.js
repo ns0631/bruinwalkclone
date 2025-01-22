@@ -17,6 +17,8 @@ import MainSearchPage from "./pages/MainSearchPage";
 import MyReviews from "./pages/MyReviews";
 import EditReview from "./pages/EditReview";
 
+import ClassesPage from "./pages/ClassesPage";
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
@@ -34,12 +36,13 @@ root.render(
           
           <Route path="myreviews" element={(Cookies.get('email')) ? <MyReviews/> : <Navigate to='/login'  />} />
           <Route path="editreview" element={(Cookies.get('email')) ? <EditReview/> : <Navigate to='/login' />} />
+          <Route path="classes" element={ <ClassesPage/> } />
 
           <Route path="*" element={<Home/>} />
         </Routes>
       </BrowserRouter>
     </div>
-    <footer><small>Written by Nikhil Sunkad in 2025. A copy of <a href="https://www.bruinwalk.com/">Bruinwalk</a>. Credit to Suzy's and Ollie of 118 Kerckhoff Hall. &copy; UCLA Student Media.</small></footer>
+    <footer><small>Written by Nikhil Sunkad in 2025. A copy of <a href="https://www.bruinwalk.com/" target="_blank">Bruinwalk</a>. Credit to Suzy's and Ollie of 118 Kerckhoff Hall. &copy; UCLA Student Media.</small></footer>
   </React.StrictMode>
 );
 

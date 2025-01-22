@@ -368,12 +368,27 @@ hr{
   min-height: 10vh;
 }
 
-.contentofinterest p{
+.classpageprofpreviews{
+  z-index:-10;
+  position:absolute;
+  top:25vh;
+  min-width:95vw;
+  margin:auto;
+  display:flex;
+  flex-wrap:wrap;
+}
+
+.contentofinterest p, .classpageprofpreviews p{
   background-color: white;
   border-radius:10px;
   overflow:auto;
-  border-color: 1px solid black;
   z-index:-1;
+  box-shadow: 5px 5px 5px;
+}
+
+.classpageprofpreviews p{
+  min-width: 45vw;
+  margin: 5vh 2vw 5vh 2vw;
 }
 
 .contentofinterest div{
@@ -416,8 +431,10 @@ hr{
   background-color: rgba(224, 221, 221, 1.0);
   border-radius: 10px;
   padding: 0.5vh 0.5vw 0.5vh 0.5vw;
-  margin: 1vh auto 1vh auto;
+  margin: 5vh auto 5vh auto;
   overflow:auto;
+
+  box-shadow: 5px 5px 5px;
 }
 
 .userreview p{
@@ -508,9 +525,14 @@ hr{
   background-color: rgb(206, 203, 203);
   padding: 0.25vh 0.25vw 0.25vh 0.25vw;
   border-radius: 10px;
-  min-width:45%;
+  width:max(45%, 150px);
+  text-align: left;
 }
 .overallratinglabel{
   font-size:12px;
+  float:right;
+}
+.avgratingprofprofile{
+  font-weight: bold;
   float:right;
 }

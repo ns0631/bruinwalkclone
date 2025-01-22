@@ -1,31 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import {useSearchParams} from "react-router-dom";
+import {useSearchParams, useParams} from "react-router-dom";
 import HomePageSearchBar from '../Search';
 
-import ProfOverview from "../Professors";
+import ProfForClassOverview from "../Professors";
 import ClassOverview from "../ClassInfo";
 
-function MainSearchPage() {
-    async function initialSearch(input) {
+function ClassesPage() {
+    async function initialSearch(classname) {
         return (async () => {
-          const rawResponse = await fetch("http://localhost:8000/api/search", {
+          const rawResponse = await fetch("http://localhost:8000/api/classoverview", {
             method: 'POST',
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({text: input, restriction:restriction})
+            body: JSON.stringify({classname:classname})
           });
           const content = await rawResponse.text();
           const z = JSON.parse(content);
           
-          let finished_data = z.map((a) => {
-            if(a.professor === 1){
-                return <ProfOverview id={a.id} />
-            } else{
-                return <ClassOverview id={a.id} />
-            }
-          });
+          let finished_data = z.map((a) => {return <ProfForClassOverview data={a} />});
           
           if(finished_data.length == 0){
             return <p>No results match your search.</p>
@@ -36,10 +30,6 @@ function MainSearchPage() {
 
     const [searchParams, setSearchParams] = useSearchParams();
     let searchQuery = searchParams.get("q");
-
-    useEffect(() => {
-        document.title = "Search | Bruinwalk 2.0";
-      }, []);
     
     const [loaded, setLoaded] = useState(false);
     const [contentofinterest, setContentOfInterest] = useState([]);
@@ -55,9 +45,9 @@ function MainSearchPage() {
         }
     }, [loaded, restriction] );
 
-    function handleSubmit(e){
-        e.preventDefault();
-    }
+    useEffect(() => {
+        document.title = `Results for "${ (searchQuery ? searchQuery : "") }" | Bruinwalk 2.0`;
+      }, []);
     
     return (
         <>
@@ -74,27 +64,11 @@ function MainSearchPage() {
                 <div className="signupsearchbar"><HomePageSearchBar/></div>
             </div>
             
-            <div className="contentofinterest">
+            <div className="classpageprofpreviews">
                 {contentofinterest}
             </div>
-
-            <form action="/filters" className="filtersform" method="POST" onSubmit={handleSubmit}>
-                <p style={{textAlign:"center"}}>Filters</p>
-                <p>
-                    <input id="checkProfs" value="profs" name="restrictions" type="radio" className="form-check-input" onInput={(e) => {setRestriction(e.target.value)}}/>
-                    <label for="checkProfs" className="form-check-label"> Professors</label>
-                </p>
-                <p>
-                    <input id="checkClasses" value="classes" name="restrictions" type="radio" className="form-check-input" onInput={(e) => {setRestriction(e.target.value)}}/>
-                    <label for="checkClasses" className="form-check-label"> Classes</label>
-                </p>
-                <p>
-                    <input id="checkAll" value="both" name="restrictions" type="radio" className="form-check-input" onInput={(e) => {setRestriction(e.target.value)}}/>
-                    <label for="checkAll" className="form-check-label"> All</label>
-                </p>
-            </form>
         </>
     );
 }
 
-export default MainSearchPage;
+export default ClassesPage;

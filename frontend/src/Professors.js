@@ -21,7 +21,7 @@ async function initialSearch(id) {
 function ProfOverview(props){
     const [profname, setProfName] = useState("");
 
-    useEffect( () => {initialSearch(1, props.id).then( (value) => {
+    useEffect( () => {initialSearch(props.id).then( (value) => {
         setProfName(value);
     } )}, [] );
 
