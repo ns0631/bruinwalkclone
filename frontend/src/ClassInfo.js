@@ -66,16 +66,18 @@ function ClassOverview(props){
 
     return (
         <p>
-            <div className="classcode">
-                {classcode}
-            </div>
             <div className="avgclassrating" style={{backgroundColor: backgroundColor}}>
                 {avgRating}
             </div>
             <span className="overallratinglabel">Overall<br/>Rating</span>
-            <div className="formalclassname">
-                {classname}
-            </div>
+            <a href={"/classes?q=" + classcode}>
+                <div className="classcode">
+                    {classcode}
+                </div>
+                <div className="formalclassname">
+                    {classname}
+                </div>
+            </a>
             <div className="proflistingsforcourse">
                 {profs}
             </div>

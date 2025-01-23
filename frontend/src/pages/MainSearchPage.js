@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {useSearchParams} from "react-router-dom";
 import HomePageSearchBar from '../Search';
 
-import ProfOverview from "../Professors";
+import {ProfOverview} from "../Professors";
 import ClassOverview from "../ClassInfo";
 
 function MainSearchPage() {

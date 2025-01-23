@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {useSearchParams, useParams} from "react-router-dom";
 import HomePageSearchBar from '../Search';
 
-import ProfForClassOverview from "../Professors";
+import {ProfForClassOverview} from "../Professors";
 import ClassOverview from "../ClassInfo";
 
 function ClassesPage() {
@@ -17,13 +17,12 @@ function ClassesPage() {
             body: JSON.stringify({classname:classname})
           });
           const content = await rawResponse.text();
+          if(content === "failure"){
+            return [<p style={{backgroundColor:"white",borderRadius:"10px",boxShadow:"5px 5px 5px"}}>No results match your search.</p>];
+          }
           const z = JSON.parse(content);
-          
           let finished_data = z.map((a) => {return <ProfForClassOverview data={a} />});
           
-          if(finished_data.length == 0){
-            return <p>No results match your search.</p>
-          }
           return finished_data;
         })();
       }
@@ -38,9 +37,9 @@ function ClassesPage() {
     useEffect( () => {
         if(!loaded){
             if(!searchQuery){
-                setContentOfInterest([<p>No results match your search.</p>]);
+                setContentOfInterest([<p style={{backgroundColor:"white",borderRadius:"10px",boxShadow:"5px 5px 5px"}}>No results match your search.</p>]);
             } else{
-                initialSearch(searchQuery).then( (output) => { setContentOfInterest(output); } );
+                initialSearch(searchQuery).then( (output) => { setContentOfInterest(output);} );
             }
         }
     }, [loaded, restriction] );
@@ -64,7 +63,7 @@ function ClassesPage() {
                 <div className="signupsearchbar"><HomePageSearchBar/></div>
             </div>
             
-            <div className="classpageprofpreviews">
+            <div className="row classpagecontentofinterest">
                 {contentofinterest}
             </div>
         </>

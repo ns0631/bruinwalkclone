@@ -32,4 +32,45 @@ function ProfOverview(props){
     );
 }
 
-export default ProfOverview;
+function ProfForClassOverview(props){
+    const [backgroundColor, setBackgroundColor] = useState("gray");
+    const [avgRating, setAvgRating] = useState(props.data[1]);
+
+    useEffect( () => {
+        if(avgRating === "N/A"){
+            setBackgroundColor("gray");
+          } else if(avgRating > 4.5){
+            setBackgroundColor("#066306");
+          } else if(avgRating > 3.5){
+            setBackgroundColor("#0cb31a");
+          } else if(avgRating > 2.5){
+            setBackgroundColor("#e8f007");
+          } else if(avgRating > 1.5){
+            setBackgroundColor("orange");
+          } else{
+            setBackgroundColor("red");
+          }
+    }, avgRating );
+
+    return (
+        <>
+            <div class="col-lg-4 professoroverviewforclass">
+                <p style={{float:"left"}}>{props.data[0]}</p>
+                <div className="avgclassrating" style={{backgroundColor: backgroundColor}}>
+                    {avgRating}
+                </div>
+                <span className="overallratinglabel">Overall<br/>Rating</span>
+                
+                <p>Ease {props.data[2]}</p>
+                <p>Helpfulness {props.data[3]}</p>
+                <p>Clarity {props.data[4]}</p>
+                <p>Workload {props.data[5]}</p>
+            </div>
+            <div class="col-lg-4">
+
+            </div>
+        </>
+    );
+}
+
+export {ProfForClassOverview, ProfOverview};

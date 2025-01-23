@@ -388,11 +388,15 @@ hr{
 
 .classpageprofpreviews p{
   min-width: 45vw;
-  margin: 5vh 2vw 5vh 2vw;
+  margin: 5vh 5vw 5vh 5vw;
 }
 
 .contentofinterest div{
   margin: 1vh 1vw 1vh 1vw;
+}
+
+.contentofinterest a{
+  text-align: left;
 }
 
 .classcode{
@@ -535,4 +539,22 @@ hr{
 .avgratingprofprofile{
   font-weight: bold;
   float:right;
+}
+
+.classpagecontentofinterest{
+  z-index:-10;
+  text-align: center;
+  position:absolute;
+  top:25vh;
+  left:50%;
+  transform:translate(-50%, 0%);
+  min-width:90vw;
+  min-height: 10vh;
+}
+
+.professoroverviewforclass{
+  border-radius:10px;
+  background-color:white;
+  box-shadow: 5px 5px 5px;
+  margin: 5vh 0 5vh 0;
 }
