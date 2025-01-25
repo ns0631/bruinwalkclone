@@ -14,20 +14,70 @@ async function initialSearch(id) {
       });
       const content = await rawResponse.text();
       const z = JSON.parse(content);
-      return z.name;
+      if(z.avgRating === "N/A"){
+        z.backgroundColor = "gray";
+      } else if(z.avgRating > 4.5){
+        z.backgroundColor = "#066306";
+      } else if(z.avgRating > 3.5){
+        z.backgroundColor = "#0cb31a";
+      } else if(z.avgRating > 2.5){
+        z.backgroundColor = "#f5e90a";
+      } else if(z.avgRating > 1.5){
+        z.backgroundColor = "orange";
+      } else{
+        z.backgroundColor = "red";
+      }
+      return z;
     })();
-  }
+}
 
 function ProfOverview(props){
-    const [profname, setProfName] = useState("");
-
     useEffect( () => {initialSearch(props.id).then( (value) => {
         setProfName(value);
     } )}, [] );
 
+    const [profname, setProfName] = useState("");
+    const [avgRating, setAvgRating] = useState(0);
+    const [profClasses, setprofClasses] = useState([]);
+    const [backgroundColor, setBackgroundColor] = useState(["gray"]);
+
+    useEffect( () => { initialSearch(props.id).then( (output) => {
+        setProfName(output.name);
+        setAvgRating(output.avgRating);
+        setprofClasses(output.profClasses.map((a) => {
+            let textColor;
+            if(a[1] === "N/A"){
+                textColor = "black";
+              } else if(a[1] > 4.5){
+                textColor = "#066306";
+              } else if(a[1] > 3.5){
+                textColor = "#0cb31a";
+              } else if(a[1] > 2.5){
+                textColor = "#f5e90a";
+              } else if(a[1] > 1.5){
+                textColor = "orange";
+              } else{
+                textColor = "red";
+              }
+            return <div className="profprofile"><a href={"/classes?q=" + a[0]} className="classcode">{a[0]}</a><span style={{color:textColor}} className="avgratingprofprofile">{a[1]}</span><a href={"/classes?q=" + a[0]} className="formalclassname">{a[2]}</a></div>;
+        } ));
+        setBackgroundColor(output.backgroundColor);
+        console.log(profClasses);
+        console.log(output);
+    } ) } , [] );
+
     return (
         <p>
-            {profname}
+            <div className="avgclassrating" style={{backgroundColor: backgroundColor}}>
+                {avgRating}
+            </div>
+            <span className="overallratinglabel">Overall<br/>Rating</span>
+            <span>
+                {typeof profname === (typeof "string") ? profname : ""}
+            </span>
+            <div className="proflistingsforcourse">
+                {profClasses}
+            </div>
         </p>
     );
 }
@@ -44,7 +94,7 @@ function ProfForClassOverview(props){
           } else if(avgRating > 3.5){
             setBackgroundColor("#0cb31a");
           } else if(avgRating > 2.5){
-            setBackgroundColor("#e8f007");
+            setBackgroundColor("#f5e90a");
           } else if(avgRating > 1.5){
             setBackgroundColor("orange");
           } else{
@@ -60,11 +110,33 @@ function ProfForClassOverview(props){
                     {avgRating}
                 </div>
                 <span className="overallratinglabel">Overall<br/>Rating</span>
-                
-                <p>Ease {props.data[2]}</p>
-                <p>Helpfulness {props.data[3]}</p>
-                <p>Clarity {props.data[4]}</p>
-                <p>Workload {props.data[5]}</p>
+
+                <div className="individualratings">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span className="ratingcomponent">Ease</span>
+                            <span className="ratingvalue">{props.data[2]}/5</span>
+                            <span className="ratingvisual"><progress value={props.data[2]} max="5"></progress></span>
+                        </div>
+                        <div class="col-md-6">
+                            <span className="ratingcomponent">Helpfulness</span>
+                            <span className="ratingvalue">{props.data[3]}/5</span>
+                            <span className="ratingvisual"><progress value={props.data[3]} max="5"></progress></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-6">
+                            <span className="ratingcomponent">Clarity</span>
+                            <span className="ratingvalue">{props.data[4]}/5</span>
+                            <span className="ratingvisual"><progress value={props.data[4]} max="5"></progress></span>
+                        </div>
+                        <div class="col-md-6">
+                            <span className="ratingcomponent">Workload</span>
+                            <span className="ratingvalue">{props.data[5]}/5</span>
+                            <span className="ratingvisual"><progress value={props.data[5]} max="5"></progress></span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-lg-4">
 

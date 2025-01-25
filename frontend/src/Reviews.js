@@ -75,7 +75,6 @@ function DeleteButton(props) {
       </>
     );
   }
-  
 
 function EditableReview(data){
     let date = new Date(data.recordDate);

@@ -526,7 +526,7 @@ hr{
 }
 
 .profprofile{
-  background-color: rgb(206, 203, 203);
+  background-color: rgb(197, 196, 196);
   padding: 0.25vh 0.25vw 0.25vh 0.25vw;
   border-radius: 10px;
   width:max(45%, 150px);
@@ -557,4 +557,25 @@ hr{
   background-color:white;
   box-shadow: 5px 5px 5px;
   margin: 5vh 0 5vh 0;
+}
+
+.individualratings{
+  clear:both;
+}
+
+.ratingcomponent{
+  float:left;
+}
+
+.ratingvalue{
+  float:right;
+}
+
+.ratingvisual{
+  clear:both;
+  max-width:30%;
+}
+
+.profprofile a{
+  text-decoration: none;
 }

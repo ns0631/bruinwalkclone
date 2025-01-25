@@ -22,7 +22,7 @@ async function initialSearch(id) {
       } else if(z.avgRating > 3.5){
         z.backgroundColor = "#0cb31a";
       } else if(z.avgRating > 2.5){
-        z.backgroundColor = "#e8f007";
+        z.backgroundColor = "#f5e90a";
       } else if(z.avgRating > 1.5){
         z.backgroundColor = "orange";
       } else{
@@ -53,7 +53,7 @@ function ClassOverview(props){
               } else if(a[1] > 3.5){
                 textColor = "#0cb31a";
               } else if(a[1] > 2.5){
-                textColor = "#e8f007";
+                textColor = "#f5e90a";
               } else if(a[1] > 1.5){
                 textColor = "orange";
               } else{

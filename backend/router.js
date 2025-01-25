@@ -563,16 +563,51 @@ async function fetchProfsForClass(id){
     return profs;
 }
 
+async function fetchClassesForProf(id){
+    let query = `SELECT DISTINCT
+                        c.name,
+                        c.id,
+                        c.fullName
+                    from reviews r join classes c
+                    on r.prof=${id} and r.class=c.id;`;
+
+    const profClasses = await new Promise( (resolve) => {
+        con.query(query, function (err, result, fields) {
+            if (err) throw err;
+            
+            let jsonifiedresult = JSON.parse(JSON.stringify(result));
+            resolve(jsonifiedresult);
+        });
+    })
+
+    for(let i = 0 ; i < profClasses.length ; i++){
+        profClasses[i] = [ profClasses[i].name, await fetchAvgRatingForProfandClass(id, profClasses[i].id, 'overallRating'), profClasses[i].fullName ];
+    }
+
+    if(profClasses.length > 4){
+        return profClasses.slice(0, 4);
+    }
+    return profClasses;
+}
+
 router.post('/overviewinfo', function(req, res){
     const obj = JSON.parse(JSON.stringify(req.body));
     if(obj.id && (obj.prof !== null)){
         if(obj.prof === 1){
             //Professors
             let query = `SELECT * FROM professors where id=${obj.id}`;
-            con.query(query, function (err, result, fields) {
+            con.query(query, async function (err, result, fields) {
                 if (err) throw err;
-                
-                let jsonifiedresult = JSON.stringify(result[0]);
+
+                let jsonifiedresult = JSON.parse(JSON.stringify(result[0]));
+                const avgRating = await fetchAvgRatingForProf(obj.id, 'overallRating');
+                const profClasses = await fetchClassesForProf(obj.id);
+
+                jsonifiedresult['profClasses'] = profClasses;
+                jsonifiedresult['avgRating'] = avgRating;
+
+                console.log(jsonifiedresult);
+
                 return res.send(jsonifiedresult);
             });
         } else if(obj.prof === 0){
