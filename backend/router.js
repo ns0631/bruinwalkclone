@@ -637,7 +637,9 @@ router.post('/classoverview', async function(req, res){
         let query = `SELECT DISTINCT
                         p.name,
                         p.id,
-                        c.id AS classid
+                        c.id AS classid,
+                        c.name AS classname,
+                        c.fullname as fullclassname
                     from reviews r join professors p join classes c
                     on c.name="${obj.classname}" and r.prof=p.id and r.class=c.id;`;
             
@@ -657,7 +659,7 @@ router.post('/classoverview', async function(req, res){
 
             for(let i = 0 ; i < profs.length ; i++){
                 let id = profs[i].classid;
-                profs[i] = [ profs[i].name, await fetchAvgRatingForProfandClass(profs[i].id, id, 'overallRating'), await fetchAvgRatingForProfandClass(profs[i].id, id, 'ease'), await fetchAvgRatingForProfandClass(profs[i].id, id, 'helpfulness'), await fetchAvgRatingForProfandClass(profs[i].id, id, 'clarity'), await fetchAvgRatingForProfandClass(profs[i].id, id, 'workload') ];
+                profs[i] = [ profs[i].name, await fetchAvgRatingForProfandClass(profs[i].id, id, 'overallRating'), await fetchAvgRatingForProfandClass(profs[i].id, id, 'ease'), await fetchAvgRatingForProfandClass(profs[i].id, id, 'helpfulness'), await fetchAvgRatingForProfandClass(profs[i].id, id, 'clarity'), await fetchAvgRatingForProfandClass(profs[i].id, id, 'workload'), profs[i].classname, profs[i].fullclassname ];
             }
 
             if(profs.length > 4){
@@ -665,6 +667,67 @@ router.post('/classoverview', async function(req, res){
             }
             return res.json(profs);
     }
+});
+
+router.post('/fetchreviews', async function(req, res){
+    const parameters = JSON.parse(JSON.stringify(req.body));
+    //verify the JWT token generated for the user
+    if(!(parameters.profname && parameters.classname)){
+        res.send('failure');
+        return;
+    }
+
+    let review_query = `SELECT
+                a.id,
+                a.userid,
+                a.reviewBody,
+                a.overallRating,
+                a.helpfulness,
+                a.clarity,
+                a.ease,
+                a.workload,
+                a.quarterTaken,
+                a.yearTaken,
+                a.recordDate,
+                b.id as profid,
+                b.name AS prof,
+                c.name AS class,
+                b.id AS profid,
+                c.id AS classid,
+                c.fullname as fullclassname
+            from reviews a join professors b join classes c
+            on b.name = "${parameters.profname}" and c.name = "${parameters.classname}" and a.prof = b.id and a.class = c.id;`;
+        
+    console.log(review_query);
+    const reviews = await new Promise( (resolve) => {
+        con.query(review_query, async function (err, result, fields) {
+            if (err) throw err;
+            let parsed_reviews = JSON.parse(JSON.stringify(result));
+            resolve(parsed_reviews);
+        });
+    } );
+
+    if(reviews.length == 0){
+        return res.send("failure");
+    }
+            
+    /*const profs = await new Promise( (resolve) => {
+        con.query(info_query, function (err, result, fields) {
+            if (err) throw err;
+                    
+            let jsonifiedresult = JSON.parse(JSON.stringify(result));
+            console.log(jsonifiedresult);
+            resolve(jsonifiedresult);
+        });
+    })*/
+
+    let prof_class_summary = {overall: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'overallRating')).toFixed(1), ease: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'ease')).toFixed(1), helpfulness: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'helpfulness')).toFixed(1), clarity: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'clarity')).toFixed(1), workload: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'workload')).toFixed(1), classcode: reviews[0].class, fullclassname: reviews[0].fullclassname};
+    prof_class_summary['num_reviews'] = reviews.length;
+
+    let result = {info: prof_class_summary, reviews:reviews};
+    console.log(result);
+
+    return res.send(result);
 });
 
 //export this router to use in our index.js

@@ -59,7 +59,7 @@ function ProfOverview(props){
               } else{
                 textColor = "red";
               }
-            return <div className="profprofile"><a href={"/classes?q=" + a[0]} className="classcode">{a[0]}</a><span style={{color:textColor}} className="avgratingprofprofile">{a[1]}</span><a href={"/classes?q=" + a[0]} className="formalclassname">{a[2]}</a></div>;
+            return <div className="profprofile"><a href={"/classes?q=" + a[0] + "&prof=" + output.name} className="classcode">{a[0]}</a><span style={{color:textColor}} className="avgratingprofprofile">{a[1]}</span><a href={"/classes?q=" + a[0] + "&prof=" + output.name} className="formalclassname">{a[2]}</a></div>;
         } ));
         setBackgroundColor(output.backgroundColor);
         console.log(profClasses);
@@ -105,7 +105,7 @@ function ProfForClassOverview(props){
     return (
         <>
             <div class="col-lg-4 professoroverviewforclass">
-                <p style={{float:"left"}}>{props.data[0]}</p>
+                <p style={{float:"left"}}><a href={`/classes?q=${props.data[6]}&prof=${props.data[0]}`}>{props.data[0]}</a></p>
                 <div className="avgclassrating" style={{backgroundColor: backgroundColor}}>
                     {avgRating}
                 </div>
@@ -145,4 +145,63 @@ function ProfForClassOverview(props){
     );
 }
 
-export {ProfForClassOverview, ProfOverview};
+function ProfForClassSummary(props){
+    const [backgroundColor, setBackgroundColor] = useState("gray");
+    let avgRating = props.data.overall;
+
+    useEffect( () => {
+        if(avgRating === "N/A"){
+            setBackgroundColor("gray");
+          } else if(avgRating > 4.5){
+            setBackgroundColor("#066306");
+          } else if(avgRating > 3.5){
+            setBackgroundColor("#0cb31a");
+          } else if(avgRating > 2.5){
+            setBackgroundColor("#f5e90a");
+          } else if(avgRating > 1.5){
+            setBackgroundColor("orange");
+          } else{
+            setBackgroundColor("red");
+          }
+    }, avgRating );
+
+    return (
+        <>
+            <div class="profsummaryforclass">
+                <div className="overall" style={{backgroundColor: backgroundColor}}>
+                    <div className="additionalreviewinfo">
+                        <span className="mostimportantrating">{props.data.overall}</span>
+                        <span className="overallratinglabel">Overall Rating</span>
+                        <br/>
+                        <span className="numuserratings">Based on {props.data.num_reviews} user{props.data.num_reviews == 1 ? "" : "s" }</span>
+                    </div>
+                </div>
+
+                <div className="individualratings">
+                    <div class="rating">
+                        <span className="ratingcomponent">Ease</span>
+                        <span className="ratingvalue">{props.data.ease}/5</span>
+                        <span className="ratingvisual"><progress value={props.data.ease} max="5"></progress></span>
+                    </div>
+                    <div class="rating">
+                        <span className="ratingcomponent">Helpfulness</span>
+                        <span className="ratingvalue">{props.data.helpfulness}/5</span>
+                        <span className="ratingvisual"><progress value={props.data.helpfulness} max="5"></progress></span>
+                    </div>
+                    <div class="rating">
+                        <span className="ratingcomponent">Clarity</span>
+                        <span className="ratingvalue">{props.data.clarity}/5</span>
+                        <span className="ratingvisual"><progress value={props.data.clarity} max="5"></progress></span>
+                    </div>
+                    <div class="rating">
+                        <span className="ratingcomponent">Workload</span>
+                        <span className="ratingvalue">{props.data.workload}/5</span>
+                        <span className="ratingvisual"><progress value={props.data.workload} max="5"></progress></span>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+export {ProfForClassOverview, ProfOverview, ProfForClassSummary};

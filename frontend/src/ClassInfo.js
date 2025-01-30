@@ -59,7 +59,7 @@ function ClassOverview(props){
               } else{
                 textColor = "red";
               }
-            return <div className="profprofile">{a[0]}<span style={{color:textColor}} className="avgratingprofprofile">{a[1]}</span></div>;
+            return <div className="profprofile"><a href={`/classes?q=${output.name}&prof=${a[0]}`}>{a[0]}</a><span style={{color:textColor}} className="avgratingprofprofile">{a[1]}</span></div>;
         } ));
         setBackgroundColor(output.backgroundColor);
     } ) } , [] );
