@@ -669,6 +669,21 @@ router.post('/classoverview', async function(req, res){
     }
 });
 
+async function countGrades(profname, classname, grade){
+    let grades_query = `SELECT COUNT(grade)
+            from reviews a join professors b join classes c
+            on b.name = "${profname}" and c.name = "${classname}" and a.grade = "${grade}" and a.prof = b.id and a.class = c.id;`;
+
+    console.log(grades_query);
+    return await new Promise( (resolve) => {
+                con.query(grades_query, async function (err, result, fields) {
+                    if (err) throw err;
+                    let parsed_reviews = JSON.parse(JSON.stringify(result));
+                    resolve(parsed_reviews[0]['COUNT(grade)']);
+                });
+            } );
+}
+
 router.post('/fetchreviews', async function(req, res){
     const parameters = JSON.parse(JSON.stringify(req.body));
     //verify the JWT token generated for the user
@@ -688,13 +703,16 @@ router.post('/fetchreviews', async function(req, res){
                 a.workload,
                 a.quarterTaken,
                 a.yearTaken,
+                a.grade,
                 a.recordDate,
                 b.id as profid,
                 b.name AS prof,
                 c.name AS class,
                 b.id AS profid,
                 c.id AS classid,
-                c.fullname as fullclassname
+                c.fullname as fullclassname,
+                a.likes,
+                a.dislikes
             from reviews a join professors b join classes c
             on b.name = "${parameters.profname}" and c.name = "${parameters.classname}" and a.prof = b.id and a.class = c.id;`;
         
@@ -710,21 +728,16 @@ router.post('/fetchreviews', async function(req, res){
     if(reviews.length == 0){
         return res.send("failure");
     }
-            
-    /*const profs = await new Promise( (resolve) => {
-        con.query(info_query, function (err, result, fields) {
-            if (err) throw err;
-                    
-            let jsonifiedresult = JSON.parse(JSON.stringify(result));
-            console.log(jsonifiedresult);
-            resolve(jsonifiedresult);
-        });
-    })*/
-
+      
     let prof_class_summary = {overall: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'overallRating')).toFixed(1), ease: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'ease')).toFixed(1), helpfulness: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'helpfulness')).toFixed(1), clarity: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'clarity')).toFixed(1), workload: parseFloat(await fetchAvgRatingForProfandClass(reviews[0].profid, reviews[0].classid, 'workload')).toFixed(1), classcode: reviews[0].class, fullclassname: reviews[0].fullclassname};
     prof_class_summary['num_reviews'] = reviews.length;
 
-    let result = {info: prof_class_summary, reviews:reviews};
+    let gradeDistribution = [];
+    for(let grade of "ABCDF"){
+        gradeDistribution.push( await countGrades(parameters.profname, parameters.classname, grade) );
+    }
+
+    let result = {info: prof_class_summary, reviews:reviews, grades:gradeDistribution};
     console.log(result);
 
     return res.send(result);

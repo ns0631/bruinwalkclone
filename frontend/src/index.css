@@ -463,6 +463,12 @@ hr{
   clear:both;
   width:max(15%, 70px);
 }
+.userreview .reviewgrade{
+  text-align:left;
+  font-size: 13px;
+  clear:both;
+  width:max(15%, 70px);
+}
 
 .userreview .reviewbody{
   clear:both;
@@ -646,6 +652,11 @@ hr{
   z-index:-1;
 }
 
+.profsummaryforclass progress{
+  font-size:25px;
+  text-align:center;
+}
+
 .additionalreviewinfo .mostimportantrating{
   float:left;
   font-size:large;
@@ -668,4 +679,8 @@ hr{
 
 .classpageheaders a{
   text-decoration:none;
+}
+
+.likebutton{
+  margin-right: 0.5vw;
 }

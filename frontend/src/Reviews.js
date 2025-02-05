@@ -133,13 +133,69 @@ function EditableReview(data){
     );
 }
 
-function ReadableReview(data){
-  let date = new Date(data.recordDate);
-  let text = data.reviewBody;
-  let class_Name = data.class;
-  let professor = data.prof;
-  let quarter = data.quarterTaken;
-  let yearTaken = data.yearTaken;
+function ReadableReview(props){
+  let date = new Date(props.data.recordDate);
+  let text = props.data.reviewBody;
+  let class_Name = props.data.class;
+  let professor = props.data.prof;
+  let quarter = props.data.quarterTaken;
+  let yearTaken = props.data.yearTaken;
+  let grade = props.data.grade;
+  
+  const [likes, setLikes] = useState(props.data.likes);
+  const [dislikes, setDislikes] = useState(props.data.dislikes);
+
+  async function rate(reviewid, rating) {
+    alert("here");
+    return (async () => {
+      const rawResponse = await fetch("http://localhost:8000/api/ratereview", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({id: reviewid, rating: rating})
+      });
+      const content = await rawResponse.text();
+      alert(content);
+      if(content === "failure"){
+        return;
+      }
+      
+      if(rating==="like"){
+        setLikes(likes + 1);
+      } else{
+        setDislikes(dislikes + 1);
+      }
+
+      return;
+    })();
+  }
+
+  async function rate(reviewid, rating) {
+    return (async () => {
+      const rawResponse = await fetch("http://localhost:8000/api/ratereview", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({id: reviewid, rating: rating})
+      });
+      const content = await rawResponse.text();
+      if(content === "failure"){
+        return;
+      }
+      
+      if(rating==="like"){
+        setLikes(likes + 1);
+      } else{
+        setDislikes(dislikes + 1);
+      }
+
+      return;
+    })();
+  }
 
   return (
       <>
@@ -147,6 +203,7 @@ function ReadableReview(data){
               <p className="publishdate">{days[date.getDay()]}, {months[date.getMonth()]} {date.getDate()}, {date.getFullYear()}</p>
               <p className="courseinfo">{class_Name} — {professor}</p>
               <p className="timetaken">{quarter} {yearTaken}</p>
+              <p className="reviewgrade">Grade Received: {grade}</p>
 
               <table class="ratingtable table table-sm">
                       <thead>
@@ -158,28 +215,30 @@ function ReadableReview(data){
                       <tbody>
                       <tr>
                           <td>Overall</td>
-                          <td>{data.overallRating}</td>
+                          <td>{props.data.overallRating}</td>
                       </tr>
                       <tr>
                           <td>Ease</td>
-                          <td>{data.ease}</td>
+                          <td>{props.data.ease}</td>
                       </tr>
                       <tr>
                           <td>Workload</td>
-                          <td>{data.workload}</td>
+                          <td>{props.data.workload}</td>
                       </tr>
                       <tr>
                           <td>Clarity</td>
-                          <td>{data.clarity}</td>
+                          <td>{props.data.clarity}</td>
                       </tr>
                       <tr>
                           <td>Helpfulness</td>
-                          <td>{data.helpfulness}</td>
+                          <td>{props.data.helpfulness}</td>
                       </tr>
                       </tbody>
               </table>
 
               <div className="reviewbody"><p>{text}</p></div>
+              <button type="button" className="likebutton btn btn-success" onClick={() => { rate(props.data.id, "like"); }}><i class="fa fa-thumbs-up"></i> {likes}</button>
+              <button type="button" className="dislikebutton btn btn-danger" onClick={() => { rate(props.data.id, "dislike"); }}><i class="fa fa-thumbs-down"></i> {dislikes}</button>
           </div>
       </>
   );

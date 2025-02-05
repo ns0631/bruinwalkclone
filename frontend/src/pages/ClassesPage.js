@@ -6,6 +6,72 @@ import {ProfForClassOverview, ProfForClassSummary} from "../Professors";
 import {ReadableReview} from "../Reviews";
 import ClassOverview from "../ClassInfo";
 
+import {
+    Chart as ChartJS,
+    registerables
+  } from 'chart.js'
+  import { Chart } from 'react-chartjs-2'
+  
+ChartJS.register(...registerables)
+
+function GradeDistribution(props){
+    const gradeData = [];
+    let sum = 0;
+    for(let grade of props.data){
+        sum += Number(grade);
+    }
+
+    for(let grade of props.data){
+        gradeData.push( (Number(grade) / sum * 100).toFixed(1) );
+    }
+    const maximum = Math.max(...gradeData);
+    const xValues = ["A", "B", "C", "D", "F"];
+    const barColors = ["red", "blue","yellow","brown","red"];
+    
+    const data = {
+        labels: ["A", "B", "C", "D", "F"],
+        datasets: [{
+          label: 'Grade Distribution',
+          data: gradeData,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+          ],
+          borderColor: [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)',
+          ],
+          borderWidth: 1
+        }]
+      };
+
+      const options = {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: Math.ceil(maximum), // Set the maximum value of the y-axis to 100%
+            ticks: {
+              callback: function(value) {
+                return value + '%'; // Add the percentage sign to y-axis labels
+              }
+            }
+          }
+        }
+      };
+
+    return (
+        <>
+            <Chart type='bar' data={data} options={options}/>
+        </>
+    );
+}
+
 function ClassesPage() {
     const [officialClassName, setOfficialClassName] = useState("");
     const [classCode, setClassCode] = useState("");
@@ -56,7 +122,6 @@ function ClassesPage() {
             });
             const content = await rawResponse.text();
             if(content === "failure"){
-              //return [<p style={{backgroundColor:"white",borderRadius:"10px",boxShadow:"5px 5px 5px"}}>No results match your search.</p>];
               setContentOfInterest([<p style={{backgroundColor:"white",borderRadius:"10px",boxShadow:"5px 5px 5px"}}>No results match your search.</p>]);
               return [];
             }
@@ -66,10 +131,12 @@ function ClassesPage() {
               setClassCode(z.info.classcode);
             }
             
+            const userReviews = z.reviews.map((a) => { return <ReadableReview data={a}/>; });
+            const gradeDistro = [<GradeDistribution data={z.grades}/>]
             return (
                 <div class="row">
                     <div class="col-md-3 order-md-2"><ProfForClassSummary data={z.info} /></div>
-                    <div class="col-md-9 order-md-1">{z.reviews.map((a) => { return ReadableReview(a)})}</div>
+                    <div class="col-md-9 order-md-1">{gradeDistro.concat(userReviews)}</div>
                 </div>
             );
           })();

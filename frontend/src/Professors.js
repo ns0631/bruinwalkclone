@@ -181,21 +181,25 @@ function ProfForClassSummary(props){
                     <div class="rating">
                         <span className="ratingcomponent">Ease</span>
                         <span className="ratingvalue">{props.data.ease}/5</span>
+                        <br/>
                         <span className="ratingvisual"><progress value={props.data.ease} max="5"></progress></span>
                     </div>
                     <div class="rating">
                         <span className="ratingcomponent">Helpfulness</span>
                         <span className="ratingvalue">{props.data.helpfulness}/5</span>
+                        <br/>
                         <span className="ratingvisual"><progress value={props.data.helpfulness} max="5"></progress></span>
                     </div>
                     <div class="rating">
                         <span className="ratingcomponent">Clarity</span>
                         <span className="ratingvalue">{props.data.clarity}/5</span>
+                        <br/>
                         <span className="ratingvisual"><progress value={props.data.clarity} max="5"></progress></span>
                     </div>
                     <div class="rating">
                         <span className="ratingcomponent">Workload</span>
                         <span className="ratingvalue">{props.data.workload}/5</span>
+                        <br/>
                         <span className="ratingvisual"><progress value={props.data.workload} max="5"></progress></span>
                     </div>
                 </div>
